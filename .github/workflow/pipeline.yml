@@ -1,10 +1,14 @@
 name: competitions-ci-cd
 
 on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
   pull_request:
     branches:
       - main
-
 jobs:
   build:
     name: Build
