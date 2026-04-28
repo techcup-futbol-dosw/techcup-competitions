@@ -67,4 +67,29 @@ class LineupTest {
         lineup.setStarterIds(null);
         assertFalse(lineup.validateGoalkeeper());
     }
+
+    @Test
+    void testGettersAndSetters() {
+        UUID id = UUID.randomUUID();
+        UUID matchId = UUID.randomUUID();
+        UUID teamId = UUID.randomUUID();
+        List<UUID> starters = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
+        List<UUID> substitutes = Arrays.asList(UUID.randomUUID());
+
+        lineup.setId(id);
+        lineup.setMatchId(matchId);
+        lineup.setTeamId(teamId);
+        lineup.setFormation("4-3-3");
+        lineup.setStarterIds(starters);
+        lineup.setSubstituteIds(substitutes);
+        lineup.setConfirmed(true);
+
+        assertEquals(id, lineup.getId());
+        assertEquals(matchId, lineup.getMatchId());
+        assertEquals(teamId, lineup.getTeamId());
+        assertEquals("4-3-3", lineup.getFormation());
+        assertEquals(starters, lineup.getStarterIds());
+        assertEquals(substitutes, lineup.getSubstituteIds());
+        assertTrue(lineup.isConfirmed());
+    }
 }

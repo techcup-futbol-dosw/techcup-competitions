@@ -52,4 +52,23 @@ class MatchAuditTest {
         String description = matchAudit.getDescription();
         assertTrue(description.contains("DELETED"));
     }
+
+    @Test
+    void testGettersAndSetters() {
+        UUID id = UUID.randomUUID();
+        UUID matchId = UUID.randomUUID();
+        LocalDateTime timestamp = LocalDateTime.now();
+
+        matchAudit.setId(id);
+        matchAudit.setMatchId(matchId);
+        matchAudit.setAction(MatchAuditAction.UPDATED);
+        matchAudit.setDetail("Some detail");
+        matchAudit.setTimestamp(timestamp);
+
+        assertEquals(id, matchAudit.getId());
+        assertEquals(matchId, matchAudit.getMatchId());
+        assertEquals(MatchAuditAction.UPDATED, matchAudit.getAction());
+        assertEquals("Some detail", matchAudit.getDetail());
+        assertEquals(timestamp, matchAudit.getTimestamp());
+    }
 }
