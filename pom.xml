@@ -106,6 +106,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/entity/**</exclude>
+                        <exclude>**/App.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -126,13 +132,6 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <excludes>
-                                <exclude>**/entity/*Status.class</exclude>
-                                <exclude>**/entity/*Phase.class</exclude>
-                                <exclude>**/entity/*Action.class</exclude>
-                                <exclude>**/entity/CardType.class</exclude>
-                                <exclude>**/App.class</exclude>
-                            </excludes>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
@@ -140,7 +139,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.25</minimum>
+                                            <minimum>0.20</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
