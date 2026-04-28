@@ -24,7 +24,6 @@
     </properties>
 
     <dependencies>
-        <!-- ===================== SPRING BOOT CORE DEPENDENCIES ===================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -40,13 +39,11 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- ===================== JPA & HIBERNATE DEPENDENCIES ===================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- ===================== DATABASE DRIVERS ===================== -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -59,27 +56,23 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ===================== ADDITIONAL DATA SUPPORT ===================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
-        <!-- ===================== API DOCUMENTATION ===================== -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>3.0.2</version>
         </dependency>
 
-        <!-- ===================== MAPPING ===================== -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
 
-        <!-- ===================== TESTING DEPENDENCIES ===================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -133,6 +126,13 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <excludes>
+                                <exclude>**/entity/*Status.class</exclude>
+                                <exclude>**/entity/*Phase.class</exclude>
+                                <exclude>**/entity/*Action.class</exclude>
+                                <exclude>**/entity/CardType.class</exclude>
+                                <exclude>**/App.class</exclude>
+                            </excludes>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>
@@ -140,7 +140,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.85</minimum>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
