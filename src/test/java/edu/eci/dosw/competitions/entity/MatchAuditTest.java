@@ -13,30 +13,25 @@ class MatchAuditTest {
     @BeforeEach
     void setUp() {
         matchAudit = new MatchAudit();
-        matchAudit.setMatchId(UUID.randomUUID());
+        matchAudit.setMatchId(UUID.randomUUID().toString());
         matchAudit.setAction(MatchAuditAction.CREATED);
         matchAudit.setDetail("Match created");
         matchAudit.setTimestamp(LocalDateTime.of(2024, 1, 15, 10, 30));
     }
 
-    // ===== UNIT TESTS =====
-
     @Test
     void testGetDescriptionContainsAction() {
-        String description = matchAudit.getDescription();
-        assertTrue(description.contains("CREATED"));
+        assertTrue(matchAudit.getDescription().contains("CREATED"));
     }
 
     @Test
     void testGetDescriptionContainsDetail() {
-        String description = matchAudit.getDescription();
-        assertTrue(description.contains("Match created"));
+        assertTrue(matchAudit.getDescription().contains("Match created"));
     }
 
     @Test
     void testGetDescriptionContainsTimestamp() {
-        String description = matchAudit.getDescription();
-        assertTrue(description.contains("2024-01-15"));
+        assertTrue(matchAudit.getDescription().contains("2024-01-15"));
     }
 
     @Test
@@ -51,14 +46,13 @@ class MatchAuditTest {
     @Test
     void testGetDescriptionWithDeletedAction() {
         matchAudit.setAction(MatchAuditAction.DELETED);
-        String description = matchAudit.getDescription();
-        assertTrue(description.contains("DELETED"));
+        assertTrue(matchAudit.getDescription().contains("DELETED"));
     }
 
     @Test
     void testGettersAndSetters() {
-        UUID id = UUID.randomUUID();
-        UUID matchId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String matchId = UUID.randomUUID().toString();
         LocalDateTime timestamp = LocalDateTime.now();
 
         matchAudit.setId(id);
@@ -73,8 +67,6 @@ class MatchAuditTest {
         assertEquals("Some detail", matchAudit.getDetail());
         assertEquals(timestamp, matchAudit.getTimestamp());
     }
-
-    // ===== INTEGRATION TESTS =====
 
     @Test
     void testAuditLifecycleIntegration() {

@@ -62,12 +62,12 @@ class MatchTest {
 
     @Test
     void testGettersAndSetters() {
-        UUID id = UUID.randomUUID();
-        UUID tournamentId = UUID.randomUUID();
-        UUID homeTeamId = UUID.randomUUID();
-        UUID awayTeamId = UUID.randomUUID();
-        UUID refereeId = UUID.randomUUID();
-        UUID fieldId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String tournamentId = UUID.randomUUID().toString();
+        String homeTeamId = UUID.randomUUID().toString();
+        String awayTeamId = UUID.randomUUID().toString();
+        String refereeId = UUID.randomUUID().toString();
+        String fieldId = UUID.randomUUID().toString();
         LocalDateTime scheduledAt = LocalDateTime.now();
 
         match.setId(id);
@@ -98,9 +98,9 @@ class MatchTest {
     @Test
     void testMatchLifecycleIntegration() {
         Match match = new Match();
-        match.setTournamentId(UUID.randomUUID());
-        match.setHomeTeamId(UUID.randomUUID());
-        match.setAwayTeamId(UUID.randomUUID());
+        match.setTournamentId(UUID.randomUUID().toString());
+        match.setHomeTeamId(UUID.randomUUID().toString());
+        match.setAwayTeamId(UUID.randomUUID().toString());
         match.setScheduledAt(LocalDateTime.now());
         match.setPhase(MatchPhase.GROUP_STAGE);
         match.setStatus(MatchStatus.SCHEDULED);
