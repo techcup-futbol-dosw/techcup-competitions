@@ -12,11 +12,11 @@ class DTOsTest {
     @Test
     void testCreateMatchDTO() {
         CreateMatchDTO dto = new CreateMatchDTO();
-        UUID tournamentId = UUID.randomUUID();
-        UUID homeTeamId = UUID.randomUUID();
-        UUID awayTeamId = UUID.randomUUID();
-        UUID refereeId = UUID.randomUUID();
-        UUID fieldId = UUID.randomUUID();
+        String tournamentId = UUID.randomUUID().toString();
+        String homeTeamId = UUID.randomUUID().toString();
+        String awayTeamId = UUID.randomUUID().toString();
+        String refereeId = UUID.randomUUID().toString();
+        String fieldId = UUID.randomUUID().toString();
         LocalDateTime scheduledAt = LocalDateTime.now();
 
         dto.setTournamentId(tournamentId);
@@ -40,8 +40,8 @@ class DTOsTest {
     @Test
     void testUpdateMatchDTO() {
         UpdateMatchDTO dto = new UpdateMatchDTO();
-        UUID refereeId = UUID.randomUUID();
-        UUID fieldId = UUID.randomUUID();
+        String refereeId = UUID.randomUUID().toString();
+        String fieldId = UUID.randomUUID().toString();
         LocalDateTime scheduledAt = LocalDateTime.now();
 
         dto.setRefereeId(refereeId);
@@ -57,10 +57,10 @@ class DTOsTest {
     @Test
     void testRegisterGoalDTO() {
         RegisterGoalDTO dto = new RegisterGoalDTO();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        UUID playerId = UUID.randomUUID();
-        UUID assistPlayerId = UUID.randomUUID();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        String playerId = UUID.randomUUID().toString();
+        String assistPlayerId = UUID.randomUUID().toString();
 
         dto.setMatchId(matchId);
         dto.setTeamId(teamId);
@@ -81,9 +81,9 @@ class DTOsTest {
     @Test
     void testRegisterCardDTO() {
         RegisterCardDTO dto = new RegisterCardDTO();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        UUID playerId = UUID.randomUUID();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        String playerId = UUID.randomUUID().toString();
 
         dto.setMatchId(matchId);
         dto.setTeamId(teamId);
@@ -102,10 +102,10 @@ class DTOsTest {
     @Test
     void testCreateLineupDTO() {
         CreateLineupDTO dto = new CreateLineupDTO();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        List<UUID> starters = List.of(UUID.randomUUID(), UUID.randomUUID());
-        List<UUID> substitutes = List.of(UUID.randomUUID());
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        List<String> starters = List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        List<String> substitutes = List.of(UUID.randomUUID().toString());
 
         dto.setMatchId(matchId);
         dto.setTeamId(teamId);
@@ -124,8 +124,8 @@ class DTOsTest {
     @Test
     void testUpdateLineupDTO() {
         UpdateLineupDTO dto = new UpdateLineupDTO();
-        List<UUID> starters = List.of(UUID.randomUUID(), UUID.randomUUID());
-        List<UUID> substitutes = List.of(UUID.randomUUID());
+        List<String> starters = List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        List<String> substitutes = List.of(UUID.randomUUID().toString());
 
         dto.setFormation("1-4-4-2");
         dto.setStarterIds(starters);
@@ -140,10 +140,10 @@ class DTOsTest {
     @Test
     void testMatchResponseDTO() {
         MatchResponseDTO dto = new MatchResponseDTO();
-        UUID id = UUID.randomUUID();
-        UUID tournamentId = UUID.randomUUID();
-        UUID homeTeamId = UUID.randomUUID();
-        UUID awayTeamId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String tournamentId = UUID.randomUUID().toString();
+        String homeTeamId = UUID.randomUUID().toString();
+        String awayTeamId = UUID.randomUUID().toString();
         LocalDateTime scheduledAt = LocalDateTime.now();
 
         dto.setId(id);
@@ -171,10 +171,10 @@ class DTOsTest {
     @Test
     void testMatchEventResponseDTO() {
         MatchEventResponseDTO dto = new MatchEventResponseDTO();
-        UUID id = UUID.randomUUID();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        UUID playerId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        String playerId = UUID.randomUUID().toString();
 
         dto.setId(id);
         dto.setMatchId(matchId);
@@ -195,11 +195,11 @@ class DTOsTest {
     @Test
     void testLineupResponseDTO() {
         LineupResponseDTO dto = new LineupResponseDTO();
-        UUID id = UUID.randomUUID();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        List<UUID> starters = List.of(UUID.randomUUID(), UUID.randomUUID());
-        List<UUID> substitutes = List.of(UUID.randomUUID());
+        String id = UUID.randomUUID().toString();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        List<String> starters = List.of(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        List<String> substitutes = List.of(UUID.randomUUID().toString());
 
         dto.setId(id);
         dto.setMatchId(matchId);
@@ -222,9 +222,9 @@ class DTOsTest {
     @Test
     void testStandingsResponseDTO() {
         StandingsResponseDTO dto = new StandingsResponseDTO();
-        UUID id = UUID.randomUUID();
-        UUID tournamentId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String tournamentId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
 
         dto.setId(id);
         dto.setTournamentId(tournamentId);
