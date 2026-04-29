@@ -1,12 +1,10 @@
 package edu.eci.dosw.competitions.dtos;
 
-import java.util.UUID;
-
 public class StandingsResponseDTO {
 
-    private UUID id;
-    private UUID tournamentId;
-    private UUID teamId;
+    private String id;
+    private String tournamentId;
+    private String teamId;
     private int matchesPlayed;
     private int matchesWon;
     private int matchesDrawn;
@@ -16,14 +14,14 @@ public class StandingsResponseDTO {
     private int goalDifference;
     private int points;
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public UUID getTournamentId() { return tournamentId; }
-    public void setTournamentId(UUID tournamentId) { this.tournamentId = tournamentId; }
+    public String getTournamentId() { return tournamentId; }
+    public void setTournamentId(String tournamentId) { this.tournamentId = tournamentId; }
 
-    public UUID getTeamId() { return teamId; }
-    public void setTeamId(UUID teamId) { this.teamId = teamId; }
+    public String getTeamId() { return teamId; }
+    public void setTeamId(String teamId) { this.teamId = teamId; }
 
     public int getMatchesPlayed() { return matchesPlayed; }
     public void setMatchesPlayed(int matchesPlayed) { this.matchesPlayed = matchesPlayed; }

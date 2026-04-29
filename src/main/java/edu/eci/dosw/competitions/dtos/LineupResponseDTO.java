@@ -1,35 +1,34 @@
 package edu.eci.dosw.competitions.dtos;
 
 import java.util.List;
-import java.util.UUID;
 
 public class LineupResponseDTO {
 
-    private UUID id;
-    private UUID matchId;
-    private UUID teamId;
+    private String id;
+    private String matchId;
+    private String teamId;
     private String formation;
-    private List<UUID> starterIds;
-    private List<UUID> substituteIds;
+    private List<String> starterIds;
+    private List<String> substituteIds;
     private boolean confirmed;
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public UUID getMatchId() { return matchId; }
-    public void setMatchId(UUID matchId) { this.matchId = matchId; }
+    public String getMatchId() { return matchId; }
+    public void setMatchId(String matchId) { this.matchId = matchId; }
 
-    public UUID getTeamId() { return teamId; }
-    public void setTeamId(UUID teamId) { this.teamId = teamId; }
+    public String getTeamId() { return teamId; }
+    public void setTeamId(String teamId) { this.teamId = teamId; }
 
     public String getFormation() { return formation; }
     public void setFormation(String formation) { this.formation = formation; }
 
-    public List<UUID> getStarterIds() { return starterIds; }
-    public void setStarterIds(List<UUID> starterIds) { this.starterIds = starterIds; }
+    public List<String> getStarterIds() { return starterIds; }
+    public void setStarterIds(List<String> starterIds) { this.starterIds = starterIds; }
 
-    public List<UUID> getSubstituteIds() { return substituteIds; }
-    public void setSubstituteIds(List<UUID> substituteIds) { this.substituteIds = substituteIds; }
+    public List<String> getSubstituteIds() { return substituteIds; }
+    public void setSubstituteIds(List<String> substituteIds) { this.substituteIds = substituteIds; }
 
     public boolean isConfirmed() { return confirmed; }
     public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
