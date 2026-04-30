@@ -16,9 +16,9 @@ class MatchEventTest {
     @BeforeEach
     void setUp() {
         goal = new Goal();
-        goal.setMatchId(UUID.randomUUID());
-        goal.setTeamId(UUID.randomUUID());
-        goal.setPlayerId(UUID.randomUUID());
+        goal.setMatchId(UUID.randomUUID().toString());
+        goal.setTeamId(UUID.randomUUID().toString());
+        goal.setPlayerId(UUID.randomUUID().toString());
         goal.setMinute(45);
         goal.setOwnGoal(false);
 
@@ -29,7 +29,7 @@ class MatchEventTest {
         goalWithAssist = new Goal();
         goalWithAssist.setMinute(60);
         goalWithAssist.setOwnGoal(false);
-        goalWithAssist.setAssistPlayerId(UUID.randomUUID());
+        goalWithAssist.setAssistPlayerId(UUID.randomUUID().toString());
 
         yellowCard = new Card();
         yellowCard.setMinute(20);
@@ -40,40 +40,33 @@ class MatchEventTest {
         redCard.setCardType(CardType.RED);
     }
 
-    // ===== UNIT TESTS =====
-
     @Test
     void testGoalDescription() {
-        String description = goal.getDescription();
-        assertTrue(description.contains("Goal"));
-        assertTrue(description.contains("45"));
+        assertTrue(goal.getDescription().contains("Goal"));
+        assertTrue(goal.getDescription().contains("45"));
     }
 
     @Test
     void testOwnGoalDescription() {
-        String description = ownGoal.getDescription();
-        assertTrue(description.contains("Own goal"));
-        assertTrue(description.contains("30"));
+        assertTrue(ownGoal.getDescription().contains("Own goal"));
+        assertTrue(ownGoal.getDescription().contains("30"));
     }
 
     @Test
     void testGoalWithAssistDescription() {
-        String description = goalWithAssist.getDescription();
-        assertTrue(description.contains("assisted by"));
+        assertTrue(goalWithAssist.getDescription().contains("assisted by"));
     }
 
     @Test
     void testYellowCardDescription() {
-        String description = yellowCard.getDescription();
-        assertTrue(description.contains("YELLOW"));
-        assertTrue(description.contains("20"));
+        assertTrue(yellowCard.getDescription().contains("YELLOW"));
+        assertTrue(yellowCard.getDescription().contains("20"));
     }
 
     @Test
     void testRedCardDescription() {
-        String description = redCard.getDescription();
-        assertTrue(description.contains("RED"));
-        assertTrue(description.contains("75"));
+        assertTrue(redCard.getDescription().contains("RED"));
+        assertTrue(redCard.getDescription().contains("75"));
     }
 
     @Test
@@ -88,11 +81,11 @@ class MatchEventTest {
 
     @Test
     void testGoalGettersAndSetters() {
-        UUID id = UUID.randomUUID();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        UUID playerId = UUID.randomUUID();
-        UUID assistPlayerId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        String playerId = UUID.randomUUID().toString();
+        String assistPlayerId = UUID.randomUUID().toString();
 
         goal.setId(id);
         goal.setMatchId(matchId);
@@ -113,10 +106,10 @@ class MatchEventTest {
 
     @Test
     void testCardGettersAndSetters() {
-        UUID id = UUID.randomUUID();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        UUID playerId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        String playerId = UUID.randomUUID().toString();
 
         yellowCard.setId(id);
         yellowCard.setMatchId(matchId);
@@ -133,8 +126,6 @@ class MatchEventTest {
         assertEquals(CardType.RED, yellowCard.getCardType());
     }
 
-    // ===== INTEGRATION TESTS =====
-
     @Test
     void testGoalAndCardInMatchIntegration() {
         Match match = new Match();
@@ -143,15 +134,15 @@ class MatchEventTest {
 
         Goal matchGoal = new Goal();
         matchGoal.setMatchId(match.getId());
-        matchGoal.setTeamId(UUID.randomUUID());
-        matchGoal.setPlayerId(UUID.randomUUID());
+        matchGoal.setTeamId(UUID.randomUUID().toString());
+        matchGoal.setPlayerId(UUID.randomUUID().toString());
         matchGoal.setMinute(35);
         matchGoal.setOwnGoal(false);
 
         Card matchCard = new Card();
         matchCard.setMatchId(match.getId());
-        matchCard.setTeamId(UUID.randomUUID());
-        matchCard.setPlayerId(UUID.randomUUID());
+        matchCard.setTeamId(UUID.randomUUID().toString());
+        matchCard.setPlayerId(UUID.randomUUID().toString());
         matchCard.setMinute(40);
         matchCard.setCardType(CardType.YELLOW);
 
@@ -196,8 +187,8 @@ class MatchEventTest {
 
         Goal ownGoalEvent = new Goal();
         ownGoalEvent.setMatchId(match.getId());
-        ownGoalEvent.setTeamId(UUID.randomUUID());
-        ownGoalEvent.setPlayerId(UUID.randomUUID());
+        ownGoalEvent.setTeamId(UUID.randomUUID().toString());
+        ownGoalEvent.setPlayerId(UUID.randomUUID().toString());
         ownGoalEvent.setMinute(88);
         ownGoalEvent.setOwnGoal(true);
 

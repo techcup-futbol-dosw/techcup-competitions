@@ -1,35 +1,34 @@
 package edu.eci.dosw.competitions.entity;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class MatchBuilder {
 
-    private UUID tournamentId;
-    private UUID homeTeamId;
-    private UUID awayTeamId;
-    private UUID refereeId;
-    private UUID fieldId;
+    private String tournamentId;
+    private String homeTeamId;
+    private String awayTeamId;
+    private String refereeId;
+    private String fieldId;
     private LocalDateTime scheduledAt;
     private MatchPhase phase;
 
-    public MatchBuilder withTournament(UUID tournamentId) {
+    public MatchBuilder withTournament(String tournamentId) {
         this.tournamentId = tournamentId;
         return this;
     }
 
-    public MatchBuilder withTeams(UUID homeId, UUID awayId) {
+    public MatchBuilder withTeams(String homeId, String awayId) {
         this.homeTeamId = homeId;
         this.awayTeamId = awayId;
         return this;
     }
 
-    public MatchBuilder withReferee(UUID refereeId) {
+    public MatchBuilder withReferee(String refereeId) {
         this.refereeId = refereeId;
         return this;
     }
 
-    public MatchBuilder withField(UUID fieldId) {
+    public MatchBuilder withField(String fieldId) {
         this.fieldId = fieldId;
         return this;
     }
@@ -58,11 +57,11 @@ public class MatchBuilder {
     }
 
     // Getters
-    public UUID getTournamentId() { return tournamentId; }
-    public UUID getHomeTeamId() { return homeTeamId; }
-    public UUID getAwayTeamId() { return awayTeamId; }
-    public UUID getRefereeId() { return refereeId; }
-    public UUID getFieldId() { return fieldId; }
+    public String getTournamentId() { return tournamentId; }
+    public String getHomeTeamId() { return homeTeamId; }
+    public String getAwayTeamId() { return awayTeamId; }
+    public String getRefereeId() { return refereeId; }
+    public String getFieldId() { return fieldId; }
     public LocalDateTime getScheduledAt() { return scheduledAt; }
     public MatchPhase getPhase() { return phase; }
 }

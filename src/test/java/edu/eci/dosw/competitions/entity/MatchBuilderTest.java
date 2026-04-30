@@ -9,21 +9,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class MatchBuilderTest {
 
     private MatchBuilder matchBuilder;
-    private UUID tournamentId;
-    private UUID homeTeamId;
-    private UUID awayTeamId;
-    private UUID refereeId;
-    private UUID fieldId;
+    private String tournamentId;
+    private String homeTeamId;
+    private String awayTeamId;
+    private String refereeId;
+    private String fieldId;
     private LocalDateTime scheduledAt;
 
     @BeforeEach
     void setUp() {
         matchBuilder = new MatchBuilder();
-        tournamentId = UUID.randomUUID();
-        homeTeamId = UUID.randomUUID();
-        awayTeamId = UUID.randomUUID();
-        refereeId = UUID.randomUUID();
-        fieldId = UUID.randomUUID();
+        tournamentId = UUID.randomUUID().toString();
+        homeTeamId = UUID.randomUUID().toString();
+        awayTeamId = UUID.randomUUID().toString();
+        refereeId = UUID.randomUUID().toString();
+        fieldId = UUID.randomUUID().toString();
         scheduledAt = LocalDateTime.now();
     }
 

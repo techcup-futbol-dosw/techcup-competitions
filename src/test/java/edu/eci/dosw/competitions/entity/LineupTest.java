@@ -27,11 +27,11 @@ class LineupTest {
 
     @Test
     void testValidateStartersWithExactly11Players() {
-        List<UUID> starters = Arrays.asList(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID()
+        List<String> starters = Arrays.asList(
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString()
         );
         lineup.setStarterIds(starters);
         assertTrue(lineup.validateStarters());
@@ -39,8 +39,8 @@ class LineupTest {
 
     @Test
     void testValidateStartersWithLessThan11Players() {
-        List<UUID> starters = Arrays.asList(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()
+        List<String> starters = Arrays.asList(
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString()
         );
         lineup.setStarterIds(starters);
         assertFalse(lineup.validateStarters());
@@ -54,7 +54,7 @@ class LineupTest {
 
     @Test
     void testValidateGoalkeeperWithPlayers() {
-        lineup.setStarterIds(Arrays.asList(UUID.randomUUID()));
+        lineup.setStarterIds(Arrays.asList(UUID.randomUUID().toString()));
         assertTrue(lineup.validateGoalkeeper());
     }
 
@@ -72,11 +72,11 @@ class LineupTest {
 
     @Test
     void testGettersAndSetters() {
-        UUID id = UUID.randomUUID();
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
-        List<UUID> starters = Arrays.asList(UUID.randomUUID(), UUID.randomUUID());
-        List<UUID> substitutes = Arrays.asList(UUID.randomUUID());
+        String id = UUID.randomUUID().toString();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
+        List<String> starters = Arrays.asList(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        List<String> substitutes = Arrays.asList(UUID.randomUUID().toString());
 
         lineup.setId(id);
         lineup.setMatchId(matchId);
@@ -99,21 +99,21 @@ class LineupTest {
 
     @Test
     void testLineupFullFlowIntegration() {
-        UUID matchId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
+        String matchId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
 
         lineup.setMatchId(matchId);
         lineup.setTeamId(teamId);
         lineup.setFormation("4-4-2");
 
-        List<UUID> starters = Arrays.asList(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID()
+        List<String> starters = Arrays.asList(
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString()
         );
         lineup.setStarterIds(starters);
-        lineup.setSubstituteIds(Arrays.asList(UUID.randomUUID(), UUID.randomUUID()));
+        lineup.setSubstituteIds(Arrays.asList(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
 
         assertTrue(lineup.validateStarters());
         assertTrue(lineup.validateGoalkeeper());
@@ -129,13 +129,13 @@ class LineupTest {
         match.setStatus(MatchStatus.SCHEDULED);
 
         lineup.setMatchId(match.getId());
-        lineup.setTeamId(UUID.randomUUID());
+        lineup.setTeamId(UUID.randomUUID().toString());
 
-        List<UUID> starters = Arrays.asList(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                UUID.randomUUID(), UUID.randomUUID()
+        List<String> starters = Arrays.asList(
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(), UUID.randomUUID().toString()
         );
         lineup.setStarterIds(starters);
 
@@ -151,9 +151,9 @@ class LineupTest {
 
     @Test
     void testInvalidLineupIntegration() {
-        lineup.setMatchId(UUID.randomUUID());
-        lineup.setTeamId(UUID.randomUUID());
-        lineup.setStarterIds(Arrays.asList(UUID.randomUUID(), UUID.randomUUID()));
+        lineup.setMatchId(UUID.randomUUID().toString());
+        lineup.setTeamId(UUID.randomUUID().toString());
+        lineup.setStarterIds(Arrays.asList(UUID.randomUUID().toString(), UUID.randomUUID().toString()));
 
         assertFalse(lineup.validateStarters());
         assertTrue(lineup.validateGoalkeeper());

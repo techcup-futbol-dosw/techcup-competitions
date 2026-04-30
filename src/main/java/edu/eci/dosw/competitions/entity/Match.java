@@ -2,28 +2,26 @@ package edu.eci.dosw.competitions.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "matches")
 public class Match {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @Column(nullable = false)
-    private UUID tournamentId;
+    private String tournamentId;
 
     @Column(nullable = false)
-    private UUID homeTeamId;
+    private String homeTeamId;
 
     @Column(nullable = false)
-    private UUID awayTeamId;
+    private String awayTeamId;
 
-    private UUID refereeId;
+    private String refereeId;
 
-    private UUID fieldId;
+    private String fieldId;
 
     @Column(nullable = false)
     private LocalDateTime scheduledAt;
@@ -61,18 +59,18 @@ public class Match {
     }
 
     // Getters y Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-    public UUID getTournamentId() { return tournamentId; }
-    public void setTournamentId(UUID tournamentId) { this.tournamentId = tournamentId; }
-    public UUID getHomeTeamId() { return homeTeamId; }
-    public void setHomeTeamId(UUID homeTeamId) { this.homeTeamId = homeTeamId; }
-    public UUID getAwayTeamId() { return awayTeamId; }
-    public void setAwayTeamId(UUID awayTeamId) { this.awayTeamId = awayTeamId; }
-    public UUID getRefereeId() { return refereeId; }
-    public void setRefereeId(UUID refereeId) { this.refereeId = refereeId; }
-    public UUID getFieldId() { return fieldId; }
-    public void setFieldId(UUID fieldId) { this.fieldId = fieldId; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getTournamentId() { return tournamentId; }
+    public void setTournamentId(String tournamentId) { this.tournamentId = tournamentId; }
+    public String getHomeTeamId() { return homeTeamId; }
+    public void setHomeTeamId(String homeTeamId) { this.homeTeamId = homeTeamId; }
+    public String getAwayTeamId() { return awayTeamId; }
+    public void setAwayTeamId(String awayTeamId) { this.awayTeamId = awayTeamId; }
+    public String getRefereeId() { return refereeId; }
+    public void setRefereeId(String refereeId) { this.refereeId = refereeId; }
+    public String getFieldId() { return fieldId; }
+    public void setFieldId(String fieldId) { this.fieldId = fieldId; }
     public LocalDateTime getScheduledAt() { return scheduledAt; }
     public void setScheduledAt(LocalDateTime scheduledAt) { this.scheduledAt = scheduledAt; }
     public MatchStatus getStatus() { return status; }

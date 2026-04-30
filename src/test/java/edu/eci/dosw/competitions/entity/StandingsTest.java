@@ -12,11 +12,9 @@ class StandingsTest {
     @BeforeEach
     void setUp() {
         standings = new Standings();
-        standings.setTournamentId(UUID.randomUUID());
-        standings.setTeamId(UUID.randomUUID());
+        standings.setTournamentId(UUID.randomUUID().toString());
+        standings.setTeamId(UUID.randomUUID().toString());
     }
-
-    // ===== UNIT TESTS =====
 
     @Test
     void testUpdateAfterMatchWin() {
@@ -80,9 +78,9 @@ class StandingsTest {
 
     @Test
     void testGettersAndSetters() {
-        UUID id = UUID.randomUUID();
-        UUID tournamentId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
+        String id = UUID.randomUUID().toString();
+        String tournamentId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
 
         standings.setId(id);
         standings.setTournamentId(tournamentId);
@@ -108,8 +106,6 @@ class StandingsTest {
         assertEquals(7, standings.getGoalDifference());
         assertEquals(18, standings.getPoints());
     }
-
-    // ===== INTEGRATION TESTS =====
 
     @Test
     void testMultipleMatchesIntegration() {
@@ -143,8 +139,8 @@ class StandingsTest {
 
     @Test
     void testStandingsWithTournamentIntegration() {
-        UUID tournamentId = UUID.randomUUID();
-        UUID teamId = UUID.randomUUID();
+        String tournamentId = UUID.randomUUID().toString();
+        String teamId = UUID.randomUUID().toString();
 
         standings.setTournamentId(tournamentId);
         standings.setTeamId(teamId);
