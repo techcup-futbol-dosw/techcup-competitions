@@ -39,7 +39,7 @@ public class Match {
     private int awayScore;
 
     public void start() {
-        this.status = MatchStatus.SCHEDULED;
+        this.status = MatchStatus.IN_PROGRESS;
     }
 
     public void finish() {
@@ -51,7 +51,8 @@ public class Match {
     }
 
     public boolean canBeModified() {
-        return this.status == MatchStatus.SCHEDULED;
+        return this.status == MatchStatus.SCHEDULED
+                || this.status == MatchStatus.IN_PROGRESS;
     }
 
     public boolean canBeDeleted() {
