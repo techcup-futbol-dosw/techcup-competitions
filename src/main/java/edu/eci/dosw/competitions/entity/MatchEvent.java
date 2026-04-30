@@ -19,7 +19,7 @@ public abstract class MatchEvent {
     @Column(nullable = false)
     private String playerId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "event_minute")
     private int minute;
 
     public abstract String getDescription();
