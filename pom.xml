@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>3.4.0</version>
         <relativePath/>
     </parent>
 
@@ -141,7 +141,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.20</minimum>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
