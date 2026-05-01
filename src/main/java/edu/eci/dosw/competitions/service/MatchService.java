@@ -5,6 +5,7 @@ import edu.eci.dosw.competitions.dtos.RegisterCardDTO;
 import edu.eci.dosw.competitions.dtos.RegisterGoalDTO;
 import edu.eci.dosw.competitions.dtos.UpdateMatchDTO;
 import edu.eci.dosw.competitions.entity.*;
+import edu.eci.dosw.competitions.model.MatchModel;
 import edu.eci.dosw.competitions.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,7 @@ public class MatchService {
                 .withPhase(MatchPhase.valueOf(dto.getPhase()))
                 .build();
 
+        match.setId(UUID.randomUUID().toString());
         matchRepository.save(match);
         logAudit(match.getId(), MatchAuditAction.CREATED, "Match created");
         return match;
@@ -49,9 +51,8 @@ public class MatchService {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Match not found: " + id));
 
-        if (!match.canBeModified()) {
-            throw new RuntimeException("Match cannot be modified in its current status");
-        }
+        MatchModel model = new MatchModel(match);
+        model.modify();
 
         if (dto.getRefereeId() != null) match.setRefereeId(dto.getRefereeId());
         if (dto.getFieldId() != null) match.setFieldId(dto.getFieldId());
@@ -66,9 +67,8 @@ public class MatchService {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Match not found: " + id));
 
-        if (!match.canBeDeleted()) {
-            throw new RuntimeException("Match cannot be deleted in its current status");
-        }
+        MatchModel model = new MatchModel(match);
+        model.delete();
 
         logAudit(id, MatchAuditAction.DELETED, "Match deleted");
         matchRepository.deleteById(id);
@@ -78,7 +78,9 @@ public class MatchService {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Match not found: " + id));
 
-        match.start();
+        MatchModel model = new MatchModel(match);
+        model.start();
+
         matchRepository.save(match);
         logAudit(id, MatchAuditAction.UPDATED, "Match started");
         return match;
@@ -88,12 +90,11 @@ public class MatchService {
         Match match = matchRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Match not found: " + id));
 
-        match.finish();
+        MatchModel model = new MatchModel(match);
+        model.finish();
+
         matchRepository.save(match);
-
-        // Actualizar standings de ambos equipos
         updateStandings(match);
-
         logAudit(id, MatchAuditAction.UPDATED, "Match finished");
         return match;
     }
@@ -101,6 +102,9 @@ public class MatchService {
     public Goal registerGoal(RegisterGoalDTO dto) {
         Match match = matchRepository.findById(dto.getMatchId())
                 .orElseThrow(() -> new RuntimeException("Match not found: " + dto.getMatchId()));
+
+        MatchModel model = new MatchModel(match);
+        model.registerGoal();
 
         Goal goal = new Goal();
         goal.setId(UUID.randomUUID().toString());
@@ -113,7 +117,6 @@ public class MatchService {
 
         matchEventRepository.save(goal);
 
-        // Actualizar marcador — gol en contra suma al equipo rival
         if (dto.isOwnGoal()) {
             if (dto.getTeamId().equals(match.getHomeTeamId())) {
                 match.setAwayScore(match.getAwayScore() + 1);
@@ -134,8 +137,11 @@ public class MatchService {
     }
 
     public Card registerCard(RegisterCardDTO dto) {
-        matchRepository.findById(dto.getMatchId())
+        Match match = matchRepository.findById(dto.getMatchId())
                 .orElseThrow(() -> new RuntimeException("Match not found: " + dto.getMatchId()));
+
+        MatchModel model = new MatchModel(match);
+        model.registerCard();
 
         Card card = new Card();
         card.setId(UUID.randomUUID().toString());
