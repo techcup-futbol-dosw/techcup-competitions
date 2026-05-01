@@ -21,7 +21,7 @@ class MatchTest {
     @Test
     void testStart() {
         match.start();
-        assertEquals(MatchStatus.SCHEDULED, match.getStatus());
+        assertEquals(MatchStatus.IN_PROGRESS, match.getStatus());
     }
 
     @Test
@@ -109,7 +109,7 @@ class MatchTest {
         assertTrue(match.canBeDeleted());
 
         match.start();
-        assertEquals(MatchStatus.SCHEDULED, match.getStatus());
+        assertEquals(MatchStatus.IN_PROGRESS, match.getStatus());
 
         match.finish();
         assertEquals(MatchStatus.FINISHED, match.getStatus());
