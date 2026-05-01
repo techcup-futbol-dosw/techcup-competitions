@@ -87,6 +87,7 @@ class MatchServiceTest {
 
     @Test
     void testRegisterGoal_ownGoalAddsToOpponent() {
+        match.setStatus(MatchStatus.IN_PROGRESS);
         when(matchRepository.findById("match-1")).thenReturn(Optional.of(match));
         when(matchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(matchEventRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -106,6 +107,7 @@ class MatchServiceTest {
 
     @Test
     void testRegisterCard_savesCardAndLogsAudit() {
+        match.setStatus(MatchStatus.IN_PROGRESS);
         when(matchRepository.findById("match-1")).thenReturn(Optional.of(match));
         when(matchEventRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
@@ -145,7 +147,6 @@ class MatchServiceTest {
 
     @Test
     void testFullMatchLifecycle_createStartRegisterGoalFinish() {
-        // crear
         when(matchRepository.findById("match-1")).thenReturn(Optional.of(match));
         when(matchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(matchEventRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -214,13 +215,14 @@ class MatchServiceTest {
 
     @Test
     void testRegisterGoal_normalGoalAwayTeam_addsToAwayScore() {
+        match.setStatus(MatchStatus.IN_PROGRESS);
         when(matchRepository.findById("match-1")).thenReturn(Optional.of(match));
         when(matchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(matchEventRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         RegisterGoalDTO dto = new RegisterGoalDTO();
         dto.setMatchId("match-1");
-        dto.setTeamId("away-1"); // equipo visitante mete gol normal
+        dto.setTeamId("away-1");
         dto.setPlayerId("player-2");
         dto.setOwnGoal(false);
         dto.setMinute(60);
@@ -233,13 +235,14 @@ class MatchServiceTest {
 
     @Test
     void testRegisterGoal_ownGoalByAwayTeam_addsToHomeScore() {
+        match.setStatus(MatchStatus.IN_PROGRESS);
         when(matchRepository.findById("match-1")).thenReturn(Optional.of(match));
         when(matchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(matchEventRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         RegisterGoalDTO dto = new RegisterGoalDTO();
         dto.setMatchId("match-1");
-        dto.setTeamId("away-1"); // visitante mete gol en contra
+        dto.setTeamId("away-1");
         dto.setPlayerId("player-2");
         dto.setOwnGoal(true);
         dto.setMinute(70);
@@ -252,19 +255,20 @@ class MatchServiceTest {
 
     @Test
     void testFinishMatch_createsStandingsWhenNotExist() {
+        match.setStatus(MatchStatus.IN_PROGRESS);
+        match.setHomeScore(2);
+        match.setAwayScore(1);
+
         when(matchRepository.findById("match-1")).thenReturn(Optional.of(match));
         when(matchRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(standingsRepository.findByTournamentIdAndTeamId(any(), any()))
-                .thenReturn(Optional.empty()); // standings no existen aún
+                .thenReturn(Optional.empty());
         when(standingsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-
-        match.setHomeScore(2);
-        match.setAwayScore(1);
 
         Match result = matchService.finishMatch("match-1");
 
         assertEquals(MatchStatus.FINISHED, result.getStatus());
-        verify(standingsRepository, times(2)).save(any()); // home y away
+        verify(standingsRepository, times(2)).save(any());
     }
 
     @Test

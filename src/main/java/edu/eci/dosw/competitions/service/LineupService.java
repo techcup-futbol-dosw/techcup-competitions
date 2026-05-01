@@ -3,6 +3,7 @@ package edu.eci.dosw.competitions.service;
 import edu.eci.dosw.competitions.dtos.CreateLineupDTO;
 import edu.eci.dosw.competitions.dtos.UpdateLineupDTO;
 import edu.eci.dosw.competitions.entity.Lineup;
+import edu.eci.dosw.competitions.model.LineupModel;
 import edu.eci.dosw.competitions.repository.LineupRepository;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +35,8 @@ public class LineupService {
         Lineup lineup = lineupRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lineup not found: " + id));
 
-        if (lineup.isConfirmed()) {
-            throw new RuntimeException("Cannot update a confirmed lineup");
-        }
+        LineupModel model = new LineupModel(lineup);
+        model.update();
 
         if (dto.getFormation() != null) lineup.setFormation(dto.getFormation());
         if (dto.getStarterIds() != null) lineup.setStarterIds(dto.getStarterIds());
@@ -56,7 +56,9 @@ public class LineupService {
             throw new RuntimeException("Lineup must have at least one goalkeeper");
         }
 
-        lineup.confirm();
+        LineupModel model = new LineupModel(lineup);
+        model.confirm();
+
         return lineupRepository.save(lineup);
     }
 
