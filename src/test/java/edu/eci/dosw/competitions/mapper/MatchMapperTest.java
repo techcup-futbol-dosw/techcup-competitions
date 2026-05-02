@@ -223,4 +223,106 @@ class MatchMapperTest {
         assertEquals(0, dto.getPoints());
         assertEquals(0, dto.getGoalDifference());
     }
+
+    // ===== INTEGRACIÓN =====
+
+    @Test
+    void integracion_matchMapper_todosLosEstados() {
+        MatchStatus[] statuses = { MatchStatus.SCHEDULED, MatchStatus.IN_PROGRESS, MatchStatus.FINISHED, MatchStatus.CANCELLED };
+        MatchPhase[] phases   = { MatchPhase.GROUP_STAGE, MatchPhase.QUARTERFINALS, MatchPhase.SEMIFINALS, MatchPhase.FINAL };
+
+        for (int i = 0; i < statuses.length; i++) {
+            Match match = buildMatch("m-int-" + i, statuses[i], phases[i]);
+            MatchResponseDTO dto = matchMapper.toResponseDTO(match);
+            assertEquals(statuses[i].name(), dto.getStatus());
+            assertEquals(phases[i].name(), dto.getPhase());
+        }
+    }
+
+    @Test
+    void integracion_matchMapper_camposOpcionalesCompletos() {
+        Match match = buildMatch("full", MatchStatus.FINISHED, MatchPhase.FINAL);
+        match.setRefereeId("ref-full");
+        match.setFieldId("field-full");
+        match.setHomeScore(4);
+        match.setAwayScore(3);
+
+        MatchResponseDTO dto = matchMapper.toResponseDTO(match);
+
+        assertEquals("full", dto.getId());
+        assertEquals("ref-full", dto.getRefereeId());
+        assertEquals("field-full", dto.getFieldId());
+        assertEquals(4, dto.getHomeScore());
+        assertEquals(3, dto.getAwayScore());
+        assertEquals("FINISHED", dto.getStatus());
+        assertEquals("FINAL", dto.getPhase());
+    }
+
+    @Test
+    void integracion_eventMapper_gol_sin_asistencia() {
+        Goal goal = buildGoal("g-sin-asist", "player-9", 90, false, null);
+        MatchEventResponseDTO dto = matchEventMapper.toResponseDTO(goal);
+
+        assertEquals("g-sin-asist", dto.getId());
+        assertEquals(90, dto.getMinute());
+        assertEquals("player-9", dto.getPlayerId());
+        assertFalse(dto.getDescription().contains("assisted by"));
+    }
+
+    @Test
+    void integracion_eventMapper_tarjeta_roja_completa() {
+        Card card = new Card();
+        card.setId("red-full");
+        card.setMatchId("match-int");
+        card.setTeamId("team-int");
+        card.setPlayerId("player-red");
+        card.setMinute(55);
+        card.setCardType(CardType.RED);
+
+        MatchEventResponseDTO dto = matchEventMapper.toResponseDTO(card);
+
+        assertEquals("red-full", dto.getId());
+        assertEquals("player-red", dto.getPlayerId());
+        assertEquals(55, dto.getMinute());
+        assertTrue(dto.getDescription().contains("RED"));
+    }
+
+    @Test
+    void integracion_standingsMapper_tablaPuntosCompleta() {
+        Standings standings = new Standings();
+        standings.setId("s-int");
+        standings.setTournamentId("t-int");
+        standings.setTeamId("team-int");
+        standings.setMatchesPlayed(20);
+        standings.setMatchesWon(15);
+        standings.setMatchesDrawn(3);
+        standings.setMatchesLost(2);
+        standings.setGoalsFor(50);
+        standings.setGoalsAgainst(15);
+        standings.setGoalDifference(35);
+        standings.setPoints(48);
+
+        StandingsResponseDTO dto = standingsMapper.toResponseDTO(standings);
+
+        assertEquals("s-int", dto.getId());
+        assertEquals(20, dto.getMatchesPlayed());
+        assertEquals(15, dto.getMatchesWon());
+        assertEquals(3, dto.getMatchesDrawn());
+        assertEquals(2, dto.getMatchesLost());
+        assertEquals(50, dto.getGoalsFor());
+        assertEquals(15, dto.getGoalsAgainst());
+        assertEquals(35, dto.getGoalDifference());
+        assertEquals(48, dto.getPoints());
+    }
+
+    @Test
+    void integracion_matchMapper_idYTorneoCorrectos() {
+        Match match = buildMatch("id-check", MatchStatus.SCHEDULED, MatchPhase.GROUP_STAGE);
+        MatchResponseDTO dto = matchMapper.toResponseDTO(match);
+
+        assertEquals("id-check", dto.getId());
+        assertEquals("tournament-id-check", dto.getTournamentId());
+        assertEquals("home-id-check", dto.getHomeTeamId());
+        assertEquals("away-id-check", dto.getAwayTeamId());
+    }
 }

@@ -84,4 +84,61 @@ class LineupMapperTest {
         assertTrue(dto.getSubstituteIds().isEmpty());
         assertEquals(11, dto.getStarterIds().size());
     }
+
+    // ===== INTEGRACIÓN =====
+
+    @Test
+    void integracion_mapeoCamposIdentidad() {
+        LineupResponseDTO dto = lineupMapper.toResponseDTO(baseLineup);
+        assertEquals(baseLineup.getId(), dto.getId());
+        assertEquals(baseLineup.getMatchId(), dto.getMatchId());
+        assertEquals(baseLineup.getTeamId(), dto.getTeamId());
+        assertEquals(baseLineup.getFormation(), dto.getFormation());
+    }
+
+    @Test
+    void integracion_formacion442_confirmado() {
+        baseLineup.setFormation("4-4-2");
+        baseLineup.setConfirmed(true);
+
+        LineupResponseDTO dto = lineupMapper.toResponseDTO(baseLineup);
+
+        assertEquals("4-4-2", dto.getFormation());
+        assertTrue(dto.isConfirmed());
+        assertEquals(11, dto.getStarterIds().size());
+        assertEquals(3, dto.getSubstituteIds().size());
+    }
+
+    @Test
+    void integracion_suplentesExtendidos() {
+        baseLineup.setSubstituteIds(List.of("s1","s2","s3","s4","s5","s6","s7"));
+        LineupResponseDTO dto = lineupMapper.toResponseDTO(baseLineup);
+
+        assertEquals(7, dto.getSubstituteIds().size());
+        assertEquals("s1", dto.getSubstituteIds().get(0));
+        assertEquals("s7", dto.getSubstituteIds().get(6));
+    }
+
+    @Test
+    void integracion_lineupDiferenteEquipo() {
+        Lineup lineup = new Lineup();
+        lineup.setId("lineup-b");
+        lineup.setMatchId("match-final");
+        lineup.setTeamId("team-b");
+        lineup.setFormation("3-5-2");
+        lineup.setStarterIds(List.of("a1","a2","a3","a4","a5","a6","a7","a8","a9","a10","a11"));
+        lineup.setSubstituteIds(List.of("a12","a13","a14","a15","a16"));
+        lineup.setConfirmed(true);
+
+        LineupResponseDTO dto = lineupMapper.toResponseDTO(lineup);
+
+        assertEquals("lineup-b", dto.getId());
+        assertEquals("match-final", dto.getMatchId());
+        assertEquals("team-b", dto.getTeamId());
+        assertEquals("3-5-2", dto.getFormation());
+        assertEquals(11, dto.getStarterIds().size());
+        assertEquals(5, dto.getSubstituteIds().size());
+        assertTrue(dto.isConfirmed());
+    }
 }
+
