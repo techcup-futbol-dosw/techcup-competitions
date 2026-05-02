@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(LineupController.class)
+@WebMvcTest({LineupController.class, GlobalExceptionHandler.class})
 @AutoConfigureMockMvc(addFilters = false)
 class LineupControllerTest {
 

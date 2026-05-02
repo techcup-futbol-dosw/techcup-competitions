@@ -47,4 +47,5 @@ public class LineupController {
         Lineup lineup = lineupService.getLineup(matchId, teamId);
         return ResponseEntity.ok(lineupMapper.toResponseDTO(lineup));
     }
+
 }
