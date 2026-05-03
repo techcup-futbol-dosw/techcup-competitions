@@ -1,7 +1,7 @@
 package edu.eci.dosw.competitions.controller;
 
 import edu.eci.dosw.competitions.dtos.*;
-import edu.eci.dosw.competitions.entity.*;
+import edu.eci.dosw.competitions.entity.Standings;
 import edu.eci.dosw.competitions.mapper.MatchEventMapper;
 import edu.eci.dosw.competitions.mapper.MatchMapper;
 import edu.eci.dosw.competitions.mapper.StandingsMapper;
@@ -23,10 +23,8 @@ public class MatchController {
     private final StandingsMapper standingsMapper;
     private final StandingsRepository standingsRepository;
 
-    public MatchController(MatchService matchService,
-                           MatchMapper matchMapper,
-                           MatchEventMapper matchEventMapper,
-                           StandingsMapper standingsMapper,
+    public MatchController(MatchService matchService, MatchMapper matchMapper,
+                           MatchEventMapper matchEventMapper, StandingsMapper standingsMapper,
                            StandingsRepository standingsRepository) {
         this.matchService = matchService;
         this.matchMapper = matchMapper;
@@ -37,15 +35,14 @@ public class MatchController {
 
     @PostMapping
     public ResponseEntity<MatchResponseDTO> createMatch(@RequestBody CreateMatchDTO dto) {
-        Match match = matchService.createMatch(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(matchMapper.toResponseDTO(match));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(matchMapper.toResponseDTO(matchService.createMatch(dto)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MatchResponseDTO> updateMatch(@PathVariable String id,
                                                         @RequestBody UpdateMatchDTO dto) {
-        Match match = matchService.updateMatch(id, dto);
-        return ResponseEntity.ok(matchMapper.toResponseDTO(match));
+        return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.updateMatch(id, dto)));
     }
 
     @DeleteMapping("/{id}")
@@ -56,44 +53,39 @@ public class MatchController {
 
     @PutMapping("/{id}/start")
     public ResponseEntity<MatchResponseDTO> startMatch(@PathVariable String id) {
-        Match match = matchService.startMatch(id);
-        return ResponseEntity.ok(matchMapper.toResponseDTO(match));
+        return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.startMatch(id)));
     }
 
     @PutMapping("/{id}/finish")
     public ResponseEntity<MatchResponseDTO> finishMatch(@PathVariable String id) {
-        Match match = matchService.finishMatch(id);
-        return ResponseEntity.ok(matchMapper.toResponseDTO(match));
+        return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.finishMatch(id)));
     }
 
     @PostMapping("/goals")
     public ResponseEntity<MatchEventResponseDTO> registerGoal(@RequestBody RegisterGoalDTO dto) {
-        Goal goal = matchService.registerGoal(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(matchEventMapper.toResponseDTO(goal));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(matchEventMapper.toResponseDTO(matchService.registerGoal(dto)));
     }
 
     @PostMapping("/cards")
     public ResponseEntity<MatchEventResponseDTO> registerCard(@RequestBody RegisterCardDTO dto) {
-        Card card = matchService.registerCard(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(matchEventMapper.toResponseDTO(card));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(matchEventMapper.toResponseDTO(matchService.registerCard(dto)));
     }
 
-    @GetMapping("/{matchId}/events")
-    public ResponseEntity<List<MatchEventResponseDTO>> getEvents(@PathVariable String matchId) {
-        List<MatchEvent> events = matchService.getEventsByMatch(matchId);
-        List<MatchEventResponseDTO> dtos = events.stream()
-                .map(matchEventMapper::toResponseDTO)
-                .toList();
-        return ResponseEntity.ok(dtos);
+    @GetMapping("/{id}/events")
+    public ResponseEntity<List<MatchEventResponseDTO>> getEvents(@PathVariable String id) {
+        return ResponseEntity.ok(
+                matchService.getEventsByMatch(id).stream()
+                        .map(matchEventMapper::toResponseDTO)
+                        .toList()
+        );
     }
 
     @GetMapping("/standings/{tournamentId}")
     public ResponseEntity<List<StandingsResponseDTO>> getStandings(@PathVariable String tournamentId) {
-        List<Standings> standings = standingsRepository.findByTournamentIdOrderByPointsDescGoalDifferenceDesc(tournamentId);
-        List<StandingsResponseDTO> dtos = standings.stream()
-                .map(standingsMapper::toResponseDTO)
-                .toList();
-        return ResponseEntity.ok(dtos);
+        List<Standings> standings = standingsRepository
+                .findByTournamentIdOrderByPointsDescGoalDifferenceDesc(tournamentId);
+        return ResponseEntity.ok(standings.stream().map(standingsMapper::toResponseDTO).toList());
     }
-
 }
