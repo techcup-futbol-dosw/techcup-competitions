@@ -66,3 +66,9 @@ jobs:
           distribution: 'temurin'
       - name: Build JAR
         run: mvn package -DskipTests -B
+      - name: Desplegar a Azure
+        uses: azure/webapps-deploy@v2
+        with:
+           app-name: 'TechCupCompetitions'
+           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+           package: 'target/*.jar'
