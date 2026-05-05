@@ -1,9 +1,6 @@
 package edu.eci.dosw.competitions.controller;
 
-import edu.eci.dosw.competitions.dtos.CreateLineupDTO;
-import edu.eci.dosw.competitions.dtos.LineupResponseDTO;
-import edu.eci.dosw.competitions.dtos.UpdateLineupDTO;
-import edu.eci.dosw.competitions.entity.Lineup;
+import edu.eci.dosw.competitions.dtos.*;
 import edu.eci.dosw.competitions.mapper.LineupMapper;
 import edu.eci.dosw.competitions.service.LineupService;
 import org.springframework.http.HttpStatus;
@@ -24,28 +21,24 @@ public class LineupController {
 
     @PostMapping
     public ResponseEntity<LineupResponseDTO> createLineup(@RequestBody CreateLineupDTO dto) {
-        Lineup lineup = lineupService.createLineup(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(lineupMapper.toResponseDTO(lineup));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(lineupMapper.toResponseDTO(lineupService.createLineup(dto)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<LineupResponseDTO> updateLineup(@PathVariable String id,
                                                           @RequestBody UpdateLineupDTO dto) {
-        Lineup lineup = lineupService.updateLineup(id, dto);
-        return ResponseEntity.ok(lineupMapper.toResponseDTO(lineup));
+        return ResponseEntity.ok(lineupMapper.toResponseDTO(lineupService.updateLineup(id, dto)));
     }
 
     @PutMapping("/{id}/confirm")
     public ResponseEntity<LineupResponseDTO> confirmLineup(@PathVariable String id) {
-        Lineup lineup = lineupService.confirmLineup(id);
-        return ResponseEntity.ok(lineupMapper.toResponseDTO(lineup));
+        return ResponseEntity.ok(lineupMapper.toResponseDTO(lineupService.confirmLineup(id)));
     }
 
     @GetMapping("/match/{matchId}/team/{teamId}")
     public ResponseEntity<LineupResponseDTO> getLineup(@PathVariable String matchId,
                                                        @PathVariable String teamId) {
-        Lineup lineup = lineupService.getLineup(matchId, teamId);
-        return ResponseEntity.ok(lineupMapper.toResponseDTO(lineup));
+        return ResponseEntity.ok(lineupMapper.toResponseDTO(lineupService.getLineup(matchId, teamId)));
     }
-
 }
