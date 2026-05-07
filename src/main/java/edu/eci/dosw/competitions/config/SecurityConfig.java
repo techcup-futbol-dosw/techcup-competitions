@@ -40,7 +40,10 @@ public class SecurityConfig {
                     .requestMatchers(
                             "/swagger-ui.html",
                             "/swagger-ui/**",
-                            "/v3/api-docs/**"
+                            "/v3/api-docs/**",
+                            "/v3/api-docs.yaml",
+                            "/api-docs",
+                            "/api-docs/**"
                     ).permitAll()
                     // Consultas de partidos y standings: público
                     .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
