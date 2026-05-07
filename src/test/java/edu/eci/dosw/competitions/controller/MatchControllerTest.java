@@ -8,6 +8,8 @@ import edu.eci.dosw.competitions.mapper.MatchEventMapper;
 import edu.eci.dosw.competitions.mapper.MatchMapper;
 import edu.eci.dosw.competitions.mapper.StandingsMapper;
 import edu.eci.dosw.competitions.repository.StandingsRepository;
+import edu.eci.dosw.competitions.config.JwtAuthenticationFilter;
+import edu.eci.dosw.competitions.config.JwtService;
 import edu.eci.dosw.competitions.service.MatchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,12 @@ class MatchControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     @MockitoBean
     private MatchService matchService;
