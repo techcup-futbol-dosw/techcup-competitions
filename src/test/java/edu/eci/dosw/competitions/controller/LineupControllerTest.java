@@ -6,6 +6,8 @@ import edu.eci.dosw.competitions.dtos.LineupResponseDTO;
 import edu.eci.dosw.competitions.dtos.UpdateLineupDTO;
 import edu.eci.dosw.competitions.entity.Lineup;
 import edu.eci.dosw.competitions.mapper.LineupMapper;
+import edu.eci.dosw.competitions.config.JwtAuthenticationFilter;
+import edu.eci.dosw.competitions.config.JwtService;
 import edu.eci.dosw.competitions.service.LineupService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,12 @@ class LineupControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     @MockitoBean
     private LineupService lineupService;
