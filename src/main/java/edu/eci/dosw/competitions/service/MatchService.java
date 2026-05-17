@@ -195,4 +195,8 @@ public class MatchService {
         s.setTeamId(teamId);
         return s;
     }
+
+    public List<Match> getMatchesByReferee(String refereeId) {
+        return matchRepository.findByRefereeId(refereeId);
+    }
 }

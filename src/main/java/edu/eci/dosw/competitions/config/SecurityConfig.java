@@ -35,23 +35,21 @@ public class SecurityConfig {
             .exceptionHandling(ex -> ex
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .accessDeniedHandler(accessDeniedHandler))
-            .authorizeHttpRequests(auth -> auth
-                    // Swagger público
-                    .requestMatchers(
-                            "/",
-                            "/swagger-ui.html",
-                            "/swagger-ui/**",
-                            "/v3/api-docs/**",
-                            "/v3/api-docs.yaml",
-                            "/api-docs",
-                            "/api-docs/**"
-                    ).permitAll()
-                    // Consultas de partidos y standings: público
-                    .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
-                    // Todoo lo demás requiere autenticación
-                    .anyRequest().authenticated()
-            )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/api-docs",
+                                "/api-docs/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/matches/standings/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/matches/{id}/events").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
+                        .anyRequest().authenticated()
+                )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

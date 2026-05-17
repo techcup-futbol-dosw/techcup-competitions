@@ -9,6 +9,7 @@ import edu.eci.dosw.competitions.repository.StandingsRepository;
 import edu.eci.dosw.competitions.service.MatchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,40 +35,47 @@ public class MatchController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('match:create:any')")
     public ResponseEntity<MatchResponseDTO> createMatch(@RequestBody CreateMatchDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(matchMapper.toResponseDTO(matchService.createMatch(dto)));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('match:update:any')")
     public ResponseEntity<MatchResponseDTO> updateMatch(@PathVariable String id,
                                                         @RequestBody UpdateMatchDTO dto) {
         return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.updateMatch(id, dto)));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('match:delete:any')")
     public ResponseEntity<Void> deleteMatch(@PathVariable String id) {
         matchService.deleteMatch(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/start")
+    @PreAuthorize("hasAuthority('match:update:any')")
     public ResponseEntity<MatchResponseDTO> startMatch(@PathVariable String id) {
         return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.startMatch(id)));
     }
 
     @PutMapping("/{id}/finish")
+    @PreAuthorize("hasAuthority('match:update:any')")
     public ResponseEntity<MatchResponseDTO> finishMatch(@PathVariable String id) {
         return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.finishMatch(id)));
     }
 
     @PostMapping("/goals")
+    @PreAuthorize("hasAuthority('goal:register:any')")
     public ResponseEntity<MatchEventResponseDTO> registerGoal(@RequestBody RegisterGoalDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(matchEventMapper.toResponseDTO(matchService.registerGoal(dto)));
     }
 
     @PostMapping("/cards")
+    @PreAuthorize("hasAuthority('card:register:any')")
     public ResponseEntity<MatchEventResponseDTO> registerCard(@RequestBody RegisterCardDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(matchEventMapper.toResponseDTO(matchService.registerCard(dto)));
@@ -87,5 +95,15 @@ public class MatchController {
         List<Standings> standings = standingsRepository
                 .findByTournamentIdOrderByPointsDescGoalDifferenceDesc(tournamentId);
         return ResponseEntity.ok(standings.stream().map(standingsMapper::toResponseDTO).toList());
+    }
+
+    @GetMapping("/referee/{refereeId}")
+    @PreAuthorize("hasAuthority('referee-match:read:assigned')")
+    public ResponseEntity<List<MatchResponseDTO>> getMatchesByReferee(@PathVariable String refereeId) {
+        return ResponseEntity.ok(
+                matchService.getMatchesByReferee(refereeId).stream()
+                        .map(matchMapper::toResponseDTO)
+                        .toList()
+        );
     }
 }
