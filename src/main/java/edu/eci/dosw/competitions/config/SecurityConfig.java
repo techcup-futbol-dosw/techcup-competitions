@@ -49,6 +49,7 @@ public class SecurityConfig {
                     // Consultas de partidos y standings: público
                     .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/matches/tournament/**").permitAll()
                     // Todoo lo demás requiere autenticación
                     .anyRequest().authenticated()
             )
