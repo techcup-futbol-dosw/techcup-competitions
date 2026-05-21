@@ -68,20 +68,33 @@ public class MatchController {
     }
 
     @PostMapping("/goals")
-    @PreAuthorize("hasAuthority('goal:register:any')")
+    @PreAuthorize(
+            "hasAuthority('goal:register:any') " +
+            "or (hasAuthority('goal:register:assigned') " +
+            "and @matchAccessPolicy.canManageAssignedMatch(#dto.matchId, authentication))"
+    )
     public ResponseEntity<MatchEventResponseDTO> registerGoal(@RequestBody RegisterGoalDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(matchEventMapper.toResponseDTO(matchService.registerGoal(dto)));
     }
 
     @PostMapping("/cards")
-    @PreAuthorize("hasAuthority('card:register:any')")
+    @PreAuthorize(
+            "hasAuthority('card:register:any') " +
+            "or (hasAuthority('card:register:assigned') " +
+            "and @matchAccessPolicy.canManageAssignedMatch(#dto.matchId, authentication))"
+    )
     public ResponseEntity<MatchEventResponseDTO> registerCard(@RequestBody RegisterCardDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(matchEventMapper.toResponseDTO(matchService.registerCard(dto)));
     }
 
     @GetMapping("/{id}/events")
+    @PreAuthorize(
+            "hasAuthority('result:read:any') " +
+            "or (hasAuthority('result:read:assigned') " +
+            "and @matchAccessPolicy.canManageAssignedMatch(#id, authentication))"
+    )
     public ResponseEntity<List<MatchEventResponseDTO>> getEvents(@PathVariable String id) {
         return ResponseEntity.ok(
                 matchService.getEventsByMatch(id).stream()
@@ -91,6 +104,7 @@ public class MatchController {
     }
 
     @GetMapping("/standings/{tournamentId}")
+    @PreAuthorize("hasAuthority('standings:read:any')")
     public ResponseEntity<List<StandingsResponseDTO>> getStandings(@PathVariable String tournamentId) {
         List<Standings> standings = standingsRepository
                 .findByTournamentIdOrderByPointsDescGoalDifferenceDesc(tournamentId);

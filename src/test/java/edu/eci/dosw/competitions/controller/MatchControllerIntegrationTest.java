@@ -31,7 +31,9 @@ import com.fasterxml.jackson.databind.JsonNode;
         "match:delete:any",
         "match:read:any",
         "goal:register:any",
-        "card:register:any"
+        "card:register:any",
+        "result:read:any",
+        "standings:read:any"
 })
 class MatchControllerIntegrationTest {
 
