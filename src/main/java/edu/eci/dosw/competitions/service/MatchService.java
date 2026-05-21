@@ -195,4 +195,7 @@ public class MatchService {
         s.setTeamId(teamId);
         return s;
     }
+    public List<Match> getMatchesByTournament(String tournamentId) {
+        return matchRepository.findByTournamentId(tournamentId);
+    }
 }
