@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // Si no hay header Bearer, continuar sin autenticar
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -53,6 +52,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 List<String> roles = jwtService.extractRoles(token);
                 List<String> perms = jwtService.extractPermissions(token);
 
+                // ← única adición: no autenticar si no hay userId
+                if (userId == null || userId.isBlank()) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 Collection<GrantedAuthority> authorities = buildAuthorities(roles, perms);
 
                 UsernamePasswordAuthenticationToken authToken =
@@ -69,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Collection<GrantedAuthority> buildAuthorities(List<String> roles,
-                                                           List<String> permissions) {
+                                                          List<String> permissions) {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
         if (roles != null) {

@@ -23,9 +23,9 @@ class SecurityConfigTest {
     // ── Endpoints públicos (GET) ──────────────────────────────────────────────
 
     @Test
-    void getMatches_noToken_returns200() throws Exception {
+    void getStandings_noToken_returns401() throws Exception {
         mockMvc.perform(get("/api/matches/standings/tournament-x"))
-                .andExpect(status().isOk());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

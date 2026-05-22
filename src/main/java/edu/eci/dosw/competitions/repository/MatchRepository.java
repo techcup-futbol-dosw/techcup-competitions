@@ -15,4 +15,6 @@ public interface MatchRepository extends JpaRepository<Match, String> {
     List<Match> findByTournamentId(String tournamentId);
 
     void deleteById(String id);
+
+    List<Match> findByRefereeId(String refereeId);
 }
