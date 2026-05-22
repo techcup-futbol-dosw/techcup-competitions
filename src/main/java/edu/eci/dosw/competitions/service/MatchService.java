@@ -198,5 +198,7 @@ public class MatchService {
 
     public List<Match> getMatchesByReferee(String refereeId) {
         return matchRepository.findByRefereeId(refereeId);
+    public List<Match> getMatchesByTournament(String tournamentId) {
+        return matchRepository.findByTournamentId(tournamentId);
     }
 }

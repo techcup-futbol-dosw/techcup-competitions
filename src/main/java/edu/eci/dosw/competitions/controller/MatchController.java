@@ -1,6 +1,7 @@
 package edu.eci.dosw.competitions.controller;
 
 import edu.eci.dosw.competitions.dtos.*;
+import edu.eci.dosw.competitions.entity.Match;
 import edu.eci.dosw.competitions.entity.Standings;
 import edu.eci.dosw.competitions.mapper.MatchEventMapper;
 import edu.eci.dosw.competitions.mapper.MatchMapper;
@@ -119,5 +120,9 @@ public class MatchController {
                         .map(matchMapper::toResponseDTO)
                         .toList()
         );
+    @GetMapping("/tournament/{tournamentId}")
+    public ResponseEntity<List<MatchResponseDTO>> getByTournament(@PathVariable String tournamentId) {
+        List<Match> matches = matchService.getMatchesByTournament(tournamentId);
+        return ResponseEntity.ok(matches.stream().map(matchMapper::toResponseDTO).toList());
     }
 }
