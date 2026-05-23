@@ -112,6 +112,12 @@ public class MatchController {
         return ResponseEntity.ok(standings.stream().map(standingsMapper::toResponseDTO).toList());
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('referee-match:read:assigned') or hasAuthority('match:read:any')")
+    public ResponseEntity<MatchResponseDTO> getMatchById(@PathVariable String id) {
+        return ResponseEntity.ok(matchMapper.toResponseDTO(matchService.getMatchById(id)));
+    }
+
     @GetMapping("/referee/{refereeId}")
     @PreAuthorize("hasAuthority('referee-match:read:assigned')")
     public ResponseEntity<List<MatchResponseDTO>> getMatchesByReferee(@PathVariable String refereeId) {
@@ -120,6 +126,8 @@ public class MatchController {
                         .map(matchMapper::toResponseDTO)
                         .toList()
         );
+    }
+
     @GetMapping("/tournament/{tournamentId}")
     public ResponseEntity<List<MatchResponseDTO>> getByTournament(@PathVariable String tournamentId) {
         List<Match> matches = matchService.getMatchesByTournament(tournamentId);

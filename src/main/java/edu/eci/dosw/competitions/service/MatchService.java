@@ -196,8 +196,15 @@ public class MatchService {
         return s;
     }
 
+    public Match getMatchById(String id) {
+        return matchRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Match not found: " + id));
+    }
+
     public List<Match> getMatchesByReferee(String refereeId) {
         return matchRepository.findByRefereeId(refereeId);
+    }
+
     public List<Match> getMatchesByTournament(String tournamentId) {
         return matchRepository.findByTournamentId(tournamentId);
     }
