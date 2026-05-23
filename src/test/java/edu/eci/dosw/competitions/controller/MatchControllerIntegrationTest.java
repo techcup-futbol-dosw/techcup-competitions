@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 @Transactional
+@WithMockUser(authorities = {
+        "match:create:any",
+        "match:update:any",
+        "match:delete:any",
+        "match:read:any",
+        "goal:register:any",
+        "card:register:any",
+        "result:read:any",
+        "standings:read:any"
+})
 class MatchControllerIntegrationTest {
 
     @Autowired

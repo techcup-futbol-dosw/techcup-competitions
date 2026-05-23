@@ -31,9 +31,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({MatchController.class, GlobalExceptionHandler.class})
+import org.springframework.security.test.context.support.WithMockUser;
 
+@WebMvcTest({MatchController.class, GlobalExceptionHandler.class})
 @AutoConfigureMockMvc(addFilters = false)
+@WithMockUser(authorities = {"match:create:any", "match:update:any", "match:delete:any", "goal:register:any", "card:register:any", "result:read:any", "standings:read:any", "referee-match:read:assigned"})
 class MatchControllerTest {
 
     @Autowired

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MatchEventRepository extends JpaRepository<MatchEvent, String> {
@@ -21,4 +22,6 @@ public interface MatchEventRepository extends JpaRepository<MatchEvent, String> 
     @Query("SELECT c FROM Card c WHERE c.matchId = :matchId")
     List<Card> findCardsByMatchId(@Param("matchId") String matchId);
 
+    @Query("SELECT e.matchId FROM MatchEvent e WHERE e.id = :eventId")
+    Optional<String> findMatchIdByEventId(@Param("eventId") String eventId);
 }

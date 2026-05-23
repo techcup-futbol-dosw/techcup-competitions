@@ -30,6 +30,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
@@ -47,8 +53,17 @@ public class SecurityConfig {
                                 "/api-docs",
                                 "/api-docs/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/lineups/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
