@@ -297,4 +297,16 @@ class MatchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("FINISHED"));
     }
+    @Test
+    void testResetMatch_returns200() throws Exception {
+        responseDTO.setStatus("SCHEDULED");
+        when(matchService.resetMatch("match-1")).thenReturn(match);
+        stubMatchMapper();
+
+        mockMvc.perform(put("/api/matches/match-1/reset"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SCHEDULED"));
+
+        verify(matchService).resetMatch("match-1");
+    }
 }
