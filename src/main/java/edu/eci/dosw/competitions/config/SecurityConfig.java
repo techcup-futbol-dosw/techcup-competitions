@@ -61,6 +61,14 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
                         .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/lineups/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/matches/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/lineups/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
