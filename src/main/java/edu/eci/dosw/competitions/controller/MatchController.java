@@ -10,6 +10,7 @@ import edu.eci.dosw.competitions.repository.StandingsRepository;
 import edu.eci.dosw.competitions.service.MatchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -94,5 +95,11 @@ public class MatchController {
     public ResponseEntity<List<MatchResponseDTO>> getByTournament(@PathVariable String tournamentId) {
         List<Match> matches = matchService.getMatchesByTournament(tournamentId);
         return ResponseEntity.ok(matches.stream().map(matchMapper::toResponseDTO).toList());
+    }
+    @PutMapping("/{id}/reset")
+    @PreAuthorize("hasAuthority('match:update:any')")
+    public ResponseEntity<MatchResponseDTO> resetMatch(@PathVariable String id) {
+        Match match = matchService.resetMatch(id);
+        return ResponseEntity.ok(matchMapper.toResponseDTO(match));
     }
 }

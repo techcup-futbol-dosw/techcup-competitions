@@ -198,4 +198,14 @@ public class MatchService {
     public List<Match> getMatchesByTournament(String tournamentId) {
         return matchRepository.findByTournamentId(tournamentId);
     }
+    public Match resetMatch(String id) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Match not found: " + id));
+        match.setStatus(MatchStatus.SCHEDULED);
+        match.setHomeScore(0);
+        match.setAwayScore(0);
+        matchRepository.save(match);
+        logAudit(id, MatchAuditAction.UPDATED, "Match reset to SCHEDULED");
+        return match;
+    }
 }
