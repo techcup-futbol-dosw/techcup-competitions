@@ -53,12 +53,7 @@ public class SecurityConfig {
                                 "/api-docs",
                                 "/api-docs/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/matches/standings/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/matches/{id}/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
                         .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/lineups/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/matches/**").permitAll()
