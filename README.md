@@ -1,192 +1,401 @@
-# TechCup Competitions - Tournament Management Microservice
+# TECHCUP FÚTBOL
 
-## General Description
+> [!IMPORTANT]
+> Este repositorio contiene el *BackEnd* para el servicio de **Competencia**
 
-**TechCup Competitions** is a microservice developed in **Java with Spring Boot** responsible for managing the development of the TechCup football tournament. It manages the complete lifecycle of matches, lineups, in-game events (goals, cards), change auditing, and the automatic calculation of the standings table.
-
-### Main Features:
-- **Match Management**: Creation and control of the match lifecycle (Scheduled, In Progress, Finished, Cancelled).
-- **Lineups**: Administration of the starting and substitute roster per team for each match, with size validations.
-- **Game Events**: Real-time registration of goals (including own goals and assists) and cards (yellow/red).
-- **Standings**: Automatic and real-time calculation of points, goal difference, and team statistics after a match finishes.
-- **Auditing**: Complete traceability of actions and changes made to matches.
-- **Hybrid Storage**: Use of PostgreSQL for structured data and complex relationships, and MongoDB prepared for documents or unstructured data.
+> Para informacion general del proyecto consulta el [README general de la organización](https://github.com/techcup-futbol-dosw).
 
 ---
 
-## Technologies
+## Tabla de contenido
 
-| Layer | Technology | Version |
-|-------|------------|---------|
-| Backend | Spring Boot | 3.4.0 |
-| Language | Java | 21 |
-| Build | Apache Maven | 3.x |
-| Persistence (SQL) | Spring Data JPA / Hibernate | 3.4.0 / 6.x |
-| Persistence (NoSQL)| Spring Data MongoDB | 3.4.0 |
-| Mapping | MapStruct | 1.6.3 |
-| Database | PostgreSQL + MongoDB | 15 / 6 |
-| In-Memory DB (tests) | H2 | latest |
-| Validation | Spring Boot Validation | 3.4.0 |
-| API Docs | SpringDoc OpenAPI | 2.8.0 |
-| Testing | JUnit Jupiter + Mockito + MockMvc | 5.x |
-| Quality | JaCoCo + SonarQube | 0.8.13 / 3.10.0 |
-| CI/CD | GitHub Actions + Azure Web Apps | - |
+- [Integrantes](#integrantes)
+- [Descripción general](#descripción-general)
+- [Requerimientos](#requerimientos)
+- [Stack tecnológico](#stack-tecnológico)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Configuración local](#configuración-local)
+- [Modelación y diagramas](#modelación-y-diagramas)
+- [Funcionalidades del servicio](#funcionalidades-del-servicio)
+- [API y Endpoints](#api-y-endpoints)
+- [Pruebas y calidad](#pruebas-y-calidad)
+- [CI/CD](#cicd)
 
 ---
 
-## Requirements
+## Integrantes
 
-- Java 21
-- Apache Maven 3.9+
-- Docker (to run PostgreSQL and MongoDB)
+<!--
+  EDITAR: Completa con los datos reales de tu equipo.
+-->
+
+* **Product Owner:** [KEVYN DANIEL FORERO GONZALEZ](https://github.com/kevyn1005) → [kevyn.forero-g@mail.escuelaing.edu.co](mailto:kevyn.forero-g@mail.escuelaing.edu.co)
+* **Líder técnico:** [MARÍA JULIANA RODRÍGUEZ CAICEDO](https://github.com/JuliRodC) → [maria.rcaicedo@mail.escuelaing.edu.co](mailto:maria.rcaicedo@mail.escuelaing.edu.co)
+* **Analista funcional:** [DIEGO ALEJANDRO MONTES BONILLA](https://github.com/Banettchi) → [diego.montes-b@mail.escuelaing.edu.co](mailto:diego.montes-b@mail.escuelaing.edu.co)
+* **Desarrollador:** [JUAN ANGEL SALAS GÓMEZ](https://github.com/Juanangels1403) → [juan.salas-g@mail.escuelaing.edu.co](mailto:juan.salas-g@mail.escuelaing.edu.co)
+---
+
+## Descripción general
+
+> [!NOTE]
+> Gestiona el desarrollo deportivo del torneo
+
+### Funcionalidades del servicio
+
+| Funcionalidad | Descripción | Roles permitidos |
+|---------------|-------------|-----------------|
+| Registro de partidos | El organizador podrá crear partidos indicando: fecha y hora, cancha y equipos. Igualmente, asignará al árbitro. | Organizador |
+| Eliminación de partidos | El organizador podrá eliminar un partido siempre y cuando la fecha en la que está programado sea posterior a la fecha actual. | Organizador |
+| Actualización de partidos | El organizador podrá actualizar un partido siempre y cuando la fecha en la que está programado sea posterior a la fecha actual. Solo se podrá actualizar: fecha, hora, cancha y/o árbitro. | Organizador |
+| Alineaciones | El capitán podrá organizar la formación antes de cada partido: seleccionar titulares y reservas, elegir formación (4-3-3, 1-4-4-2, 1-4-2-3-1, 1-5-3-2/1-3-5-2) y ubicar jugadores visualmente en la cancha. Las alineaciones podrán ser consultadas por jugadores y capitanes del mismo equipo. | Capitán (gestión) / Jugador, Capitán (consulta) |
+| Resultados | El organizador del torneo registrará: marcadores, goles (relacionando el jugador que marcó), tarjetas amarillas y tarjetas rojas. | Organizador |
+| Consultas | El árbitro podrá consultar: partidos asignados, fecha y hora de los partidos, cancha del partido y equipos que jugarán. | Árbitro |
+| Auditoría | Registrar las acciones de creación, actualización o eliminación de un partido. | Admin |
 
 ---
 
-## Layered Architecture
+### Requerimientos
 
-The microservice follows a clean layered design, applying SOLID principles to ensure low coupling and high cohesion:
-
-| Layer | Responsibility | Description |
-|------|-----------------|-------------|
-| **Controller** | REST entry point | Orchestrates the reception of requests (DTOs) and HTTP responses. |
-| **Service** | Business logic | Implements tournament rules, coordinating models and persistence. |
-| **Repository** | Persistence | Spring Data JPA interfaces for database access. |
-| **Model** | Domain and State | Pure Java classes that implement design patterns (e.g., State Pattern) to control allowed transactions. |
-| **Mapper** | Data transformation | Uses MapStruct for efficient conversion between Entities and DTOs. |
+> Los requerimientos funcionales y no funcionales de este servicio se encuentran documentados en [`src/main/resources/docs/requirements/requirement.md`](src/main/resources/docs/requirements/requirement.md)
 
 ---
 
-## Domain Model
+## Stack tecnológico
 
-The domain centralizes its logic in Matches and their derivatives:
+### Backend
 
-- **Match**: Core entity defining the encounter between two teams in a tournament phase.
-- **Lineup**: Manages the players assigned to a specific match per team.
-- **MatchEvent**: Base entity for recording on-pitch occurrences.
-  - **Goal**: Records the scorer, assist, and type (normal/own goal).
-  - **Card**: Records disciplinary sanctions.
-- **Standings**: Statistical accumulation per team within a tournament.
-- **MatchAudit**: Immutable historical record of operations on matches.
+![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.4.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=hibernate&logoColor=white)
+![MapStruct](https://img.shields.io/badge/MapStruct_1.6.3-009688?style=for-the-badge)
+![Lombok](https://img.shields.io/badge/Lombok-BC4521?style=for-the-badge)
 
-### Implemented Design Patterns:
-- **State Pattern**: Controls which actions are valid based on the current match state (e.g., goals cannot be registered in a "Scheduled" or "Finished" match). It also governs lineups ("Confirmed" vs. "Unconfirmed").
-- **Builder Pattern**: Used for clean and structured creation of new matches.
+### Base de datos
 
----
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_15-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB_6-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![H2](https://img.shields.io/badge/H2_(tests)-4479A1?style=for-the-badge)
 
-## Database Model
+### Testing y calidad
 
-The relational schema in PostgreSQL is designed to maintain tournament integrity:
+![JUnit](https://img.shields.io/badge/JUnit_5-25A162?style=for-the-badge&logo=java&logoColor=white)
+![Mockito](https://img.shields.io/badge/Mockito-78A641?style=for-the-badge)
+![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage_80%25-BB0A30?style=for-the-badge)
+![SonarQube](https://img.shields.io/badge/SonarQube-4E9BCD?style=for-the-badge&logo=sonarqube&logoColor=white)
 
-- **matches**: Stores match information and status.
-- **lineups**: Relates teams and matches with player lists.
-- **match_events (and derived tables `goals`, `cards`)**: Uses JPA inheritance (JOINED) for polymorphic events.
-- **standings**: Maintains the consolidated standings table.
-- **match_audits**: Historical record of actions.
+### Herramientas y DevOps
 
-> **Note**: References to Tournaments, Teams, and Players are stored as identifiers (Strings) since these master data are managed by other microservices in the TechCup ecosystem (such as the Teams microservice).
-
----
-
-## Architectural Flow
-
-Within the TechCup ecosystem, the main flow of this service is: **Frontend / REST Client -> API Gateway -> Competitions Service**
-
-1. **Actors**: Tournament organizers (create matches, register results) and Referees/Desk (register live events).
-2. **Entry and Routing**: All requests pass first through the API Gateway, which validates JWT authentication tokens.
-3. **Core Logic**: The `techcup-competitions` service processes the request applying the state engine rules (State Pattern).
-4. **Persistence**: Changes are saved in PostgreSQL and the standings tables are updated automatically.
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 
 ---
 
-## API Documentation (Swagger/OpenAPI)
+## Estructura del proyecto
 
-The API features interactive documentation via Swagger UI, allowing exploration of match, lineup, event, and standings endpoints.
-
-![Swagger Endpoints Matches](docs/images/swagger1.png)
-![Swagger Endpoints Lineups](docs/images/swagger2.png)
-
----
-
-## Postman Testing and Validation
-
-The system has been exhaustively tested simulating tournament flows:
-
-### 1. Match Creation
-Testing the insertion of a new encounter, validating its initial state as "SCHEDULED".
-
-![Create Match](docs/images/postman_create_match.png)
-
-### 2. Goal Registration
-Testing the real-time registration of events associated with the match ID.
-
-![Register Goal](docs/images/postman_register_goal.png)
-
-### 3. Standings Query
-Testing the automatic calculation of points and goal difference after match events.
-
-![Standings](docs/images/postman_standings.png)
-
----
-
-## Code Quality and Automated Testing
-
-The project includes a robust suite of unit and integration tests covering:
-- State pattern tests to ensure no invalid transitions occur.
-- Business logic validations in Services using Mockito.
-- Repository tests with in-memory databases (H2).
-- Full integration tests (MockMvc) simulating real HTTP requests.
-
-**JaCoCo** is used to ensure code coverage and **SonarQube** for static analysis.
-
-![JaCoCo Coverage](docs/images/cobertura.png)
-
----
-
-## CI/CD Pipeline
-
-The project uses GitHub Actions for continuous integration and deployment to Azure Web Apps. The pipeline triggers on every push to the `main` and `develop` branches, and on pull requests targeting `main`. It runs four sequential jobs:
-
-| Job | Description |
-|-----|-------------|
-| Build | Checks out the code, sets up Java 21 (Temurin distribution), and compiles the project |
-| Test | Depends on Build; runs the full test suite including unit and integration tests |
-| Quality | Depends on Test; generates JaCoCo coverage reports and sends them to SonarCloud |
-| Deploy | Depends on Quality; packages the application as a JAR and deploys it to Azure Web Apps |
-
----
-
-## Docker Configuration and Deployment
-
-The microservice is containerized and supports easy local deployments via Docker.
-
-### Local Execution with Docker Compose
-Starts the required infrastructure (PostgreSQL and MongoDB):
-```bash
-docker-compose up -d
 ```
-Then, compile and run the application:
+📦 techcup-competitions/
+├── 📂 .github/
+│   └── 📂 workflows/
+│       └── 📄 pipeline.yml                                   # CI/CD: build, test, SonarQube y deploy a Azure
+├── 📂 docs/
+│   └── 📂 images/
+│       ├── 🖼️ cobertura.png                                  # Captura del reporte de cobertura JaCoCo
+│       ├── 🖼️ postman_create_match.png                       # Captura Postman: crear partido
+│       ├── 🖼️ postman_register_goal.png                      # Captura Postman: registrar gol
+│       ├── 🖼️ postman_standings.png                          # Captura Postman: tabla de posiciones
+│       ├── 🖼️ swagger1.png                                   # Captura Swagger UI (vista 1)
+│       └── 🖼️ swagger2.png                                   # Captura Swagger UI (vista 2)
+├── 📂 src/
+│   ├── 📂 main/
+│   │   ├── 📂 java/edu/eci/dosw/competitions/
+│   │   │   ├── 📄 App.java                                   # Punto de entrada Spring Boot (@SpringBootApplication)
+│   │   │   ├── 📂 config/
+│   │   │   │   ├── 📄 AccessDeniedHandlerImpl.java           # Manejador HTTP 403 – acceso denegado
+│   │   │   │   ├── 📄 AuthenticationEntryPointImpl.java      # Manejador HTTP 401 – no autenticado
+│   │   │   │   ├── 📄 CorsConfig.java                        # Configuración CORS para el frontend
+│   │   │   │   ├── 📄 JwtAuthenticationFilter.java           # Filtro que valida el token JWT en cada request
+│   │   │   │   ├── 📄 JwtService.java                        # Generación, firma y validación de tokens JWT
+│   │   │   │   ├── 📄 MatchAccessPolicy.java                 # Reglas de autorización por rol (Organizador, Árbitro, Capitán)
+│   │   │   │   └── 📄 SecurityConfig.java                    # Cadena de filtros Spring Security y rutas protegidas
+│   │   │   ├── 📂 controller/
+│   │   │   │   ├── 📄 HomeController.java                    # GET / → health-check del servicio
+│   │   │   │   ├── 📄 LineupController.java                  # Endpoints REST /api/lineups
+│   │   │   │   └── 📄 MatchController.java                   # Endpoints REST /api/matches
+│   │   │   ├── 📂 document/                                  # (reservado) Documentos MongoDB futuros
+│   │   │   ├── 📂 dtos/
+│   │   │   │   ├── 📄 CreateLineupDTO.java                   # Request: crear alineación
+│   │   │   │   ├── 📄 CreateMatchDTO.java                    # Request: crear partido
+│   │   │   │   ├── 📄 LineupResponseDTO.java                 # Response: datos de una alineación
+│   │   │   │   ├── 📄 MatchEventResponseDTO.java             # Response: evento de partido (gol / tarjeta)
+│   │   │   │   ├── 📄 MatchResponseDTO.java                  # Response: datos de un partido
+│   │   │   │   ├── 📄 RegisterCardDTO.java                   # Request: registrar tarjeta (amarilla / roja)
+│   │   │   │   ├── 📄 RegisterGoalDTO.java                   # Request: registrar gol
+│   │   │   │   ├── 📄 StandingsResponseDTO.java              # Response: fila de la tabla de posiciones
+│   │   │   │   ├── 📄 UpdateLineupDTO.java                   # Request: actualizar alineación
+│   │   │   │   └── 📄 UpdateMatchDTO.java                    # Request: actualizar partido
+│   │   │   ├── 📂 entity/
+│   │   │   │   ├── 📄 Card.java                              # Entidad JPA: tarjeta (hereda MatchEvent)
+│   │   │   │   ├── 📄 CardType.java                          # Enum: YELLOW / RED
+│   │   │   │   ├── 📄 Goal.java                              # Entidad JPA: gol (hereda MatchEvent)
+│   │   │   │   ├── 📄 Lineup.java                            # Entidad JPA: alineación de un equipo por partido
+│   │   │   │   ├── 📄 Match.java                             # Entidad JPA principal: partido
+│   │   │   │   ├── 📄 MatchAudit.java                        # Documento MongoDB: log de auditoría de partidos
+│   │   │   │   ├── 📄 MatchAuditAction.java                  # Enum: CREATE / UPDATE / DELETE
+│   │   │   │   ├── 📄 MatchBuilder.java                      # Builder para construir objetos Match con validaciones
+│   │   │   │   ├── 📄 MatchEvent.java                        # Clase abstracta JPA: evento de partido (herencia JOINED)
+│   │   │   │   ├── 📄 MatchPhase.java                        # Enum: FIRST_HALF / SECOND_HALF / EXTRA_TIME
+│   │   │   │   ├── 📄 MatchStatus.java                       # Enum: SCHEDULED → IN_PROGRESS → FINISHED / CANCELLED
+│   │   │   │   └── 📄 Standings.java                         # Entidad JPA: posición de un equipo en el torneo
+│   │   │   ├── 📂 exceptions/                                # (reservado) Excepciones personalizadas futuras
+│   │   │   ├── 📂 mapper/
+│   │   │   │   ├── 📄 LineupMapper.java                      # MapStruct: Lineup ↔ LineupResponseDTO
+│   │   │   │   ├── 📄 MatchEventMapper.java                  # MapStruct: MatchEvent ↔ MatchEventResponseDTO
+│   │   │   │   ├── 📄 MatchMapper.java                       # MapStruct: Match ↔ MatchResponseDTO / CreateMatchDTO
+│   │   │   │   └── 📄 StandingsMapper.java                   # MapStruct: Standings ↔ StandingsResponseDTO
+│   │   │   ├── 📂 model/
+│   │   │   │   ├── 📄 CancelledMatch.java                    # Estado concreto: partido cancelado
+│   │   │   │   ├── 📄 ConfirmedLineup.java                   # Estado concreto: alineación confirmada (bloqueada)
+│   │   │   │   ├── 📄 FinishedMatch.java                     # Estado concreto: partido finalizado
+│   │   │   │   ├── 📄 InProgressMatch.java                   # Estado concreto: partido en curso
+│   │   │   │   ├── 📄 LineupModel.java                       # Contexto del patrón State para Lineup
+│   │   │   │   ├── 📄 LineupState.java                       # Interfaz State para alineaciones
+│   │   │   │   ├── 📄 MatchModel.java                        # Contexto del patrón State para Match
+│   │   │   │   ├── 📄 MatchState.java                        # Interfaz State para partidos
+│   │   │   │   ├── 📄 MatchStateFactory.java                 # Factory: crea el estado correcto según MatchStatus
+│   │   │   │   ├── 📄 ScheduledMatch.java                    # Estado concreto: partido programado
+│   │   │   │   └── 📄 UnconfirmedLineup.java                 # Estado concreto: alineación pendiente de confirmación
+│   │   │   ├── 📂 repository/
+│   │   │   │   ├── 📄 LineupRepository.java                  # JPA repo: alineaciones (por partido y equipo)
+│   │   │   │   ├── 📄 MatchAuditRepository.java              # MongoDB repo: registros de auditoría
+│   │   │   │   ├── 📄 MatchEventRepository.java              # JPA repo: eventos de partido (goles y tarjetas)
+│   │   │   │   ├── 📄 MatchRepository.java                   # JPA repo: partidos (por torneo, estado, fecha)
+│   │   │   │   └── 📄 StandingsRepository.java               # JPA repo: tabla de posiciones por torneo
+│   │   │   └── 📂 service/
+│   │   │       ├── 📄 LineupService.java                     # Lógica: crear, actualizar y confirmar alineaciones
+│   │   │       └── 📄 MatchService.java                      # Lógica: CRUD de partidos, eventos, standings y auditoría
+│   │   └── 📂 resources/
+│   │       ├── 📄 application.properties                     # Config Spring: BD, JWT, servidor (puerto 8081)
+│   │       └── 📂 docs/
+│   │           ├── 📂 images/                                # Capturas para el README (Swagger, JaCoCo, Postman)
+│   │           ├── 📂 requirements/
+│   │           │   └── 📄 requirement.md                     # Requerimientos funcionales y no funcionales
+│   │           └── 📂 uml/                                   # Diagramas de arquitectura (contenedores, clases, ER)
+│   └── 📂 test/
+│       ├── 📂 java/edu/eci/dosw/competitions/
+│       │   ├── 📄 AppTest.java                               # Smoke test: carga del contexto Spring
+│       │   ├── 📂 config/
+│       │   │   ├── 📄 JwtServiceTest.java                    # Tests unitarios: generación y validación de JWT
+│       │   │   ├── 📄 MatchAccessPolicyTest.java             # Tests unitarios: reglas de acceso por rol
+│       │   │   └── 📄 SecurityConfigTest.java                # Tests de seguridad: rutas públicas y protegidas
+│       │   ├── 📂 controller/
+│       │   │   ├── 📄 GlobalExceptionHandler.java            # Manejador global de excepciones para MockMvc
+│       │   │   ├── 📄 LineupControllerIntegrationTest.java   # Tests de integración: /api/lineups con H2
+│       │   │   ├── 📄 LineupControllerTest.java              # Tests unitarios MockMvc: LineupController
+│       │   │   ├── 📄 MatchControllerIntegrationTest.java    # Tests de integración: /api/matches con H2
+│       │   │   └── 📄 MatchControllerTest.java               # Tests unitarios MockMvc: MatchController
+│       │   ├── 📂 dtos/
+│       │   │   └── 📄 DTOsTest.java                          # Tests de validación de DTOs (Bean Validation)
+│       │   ├── 📂 entity/
+│       │   │   ├── 📄 LineupTest.java                        # Tests de la entidad Lineup (builders, relaciones)
+│       │   │   ├── 📄 MatchAuditTest.java                    # Tests de la entidad MatchAudit (documento MongoDB)
+│       │   │   ├── 📄 MatchBuilderTest.java                  # Tests del Builder de Match
+│       │   │   ├── 📄 MatchEventTest.java                    # Tests de Goal y Card (herencia MatchEvent)
+│       │   │   ├── 📄 MatchTest.java                         # Tests de la entidad Match (estados, relaciones)
+│       │   │   └── 📄 StandingsTest.java                     # Tests de la entidad Standings
+│       │   ├── 📂 mapper/
+│       │   │   ├── 📄 LineupMapperTest.java                  # Tests del mapper Lineup ↔ DTO
+│       │   │   └── 📄 MatchMapperTest.java                   # Tests del mapper Match ↔ DTO
+│       │   ├── 📂 model/
+│       │   │   ├── 📄 LineupModelTest.java                   # Tests del patrón State para Lineup
+│       │   │   └── 📄 MatchModelTest.java                    # Tests del patrón State para Match (transiciones)
+│       │   ├── 📂 repository/
+│       │   │   ├── 📄 LineupRepositoryTest.java              # Tests de repositorio Lineup con H2
+│       │   │   ├── 📄 MatchAuditRepositoryTest.java          # Tests de repositorio MatchAudit (Mongo embebido)
+│       │   │   ├── 📄 MatchEventRepositoryTest.java          # Tests de repositorio MatchEvent con H2
+│       │   │   ├── 📄 MatchRepositoryTest.java               # Tests de repositorio Match con H2
+│       │   │   └── 📄 StandingsRepositoryTest.java           # Tests de repositorio Standings con H2
+│       │   └── 📂 service/
+│       │       ├── 📄 LineupServiceTest.java                 # Tests unitarios: LineupService con Mockito
+│       │       └── 📄 MatchServiceTest.java                  # Tests unitarios: MatchService con Mockito
+│       └── 📂 resources/
+│           └── 📄 application.properties                    # Config de tests: H2 en memoria y JWT de prueba
+├── 📄 .dockerignore                                          # Archivos excluidos del contexto Docker
+├── 📄 .gitignore                                             # Archivos excluidos de Git
+├── 📄 docker-compose.yml                                     # Orquestación local: app + PostgreSQL + MongoDB
+├── 📄 Dockerfile                                             # Imagen Docker del servicio (multi-stage build)
+├── 📄 pom.xml                                                # Dependencias Maven y plugins (Spring Boot, JaCoCo, Sonar)
+└── 📄 README.md                                              # Documentación principal del servicio
+```
+
+---
+
+## Configuración local
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/techcup-futbol-dosw/techcup-competitions.git
+cd techcup-competitions
+```
+
+### 2. Compilar el proyecto
+
+```bash
+mvn clean install
+```
+
+> [!NOTE]
+> Este comando descarga dependencias y compila el proyecto completo.
+
+### 3. Configurar variables de entorno
+
+El servicio usa sustitución de variables de entorno en `application.properties`. Define las siguientes variables en tu entorno local o en un archivo `.env`:
+
+```properties
+# Base de datos PostgreSQL
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/techcup
+SPRING_DATASOURCE_USERNAME=tu_usuario
+SPRING_DATASOURCE_PASSWORD=tu_password
+
+# Base de datos MongoDB
+SPRING_MONGODB_URI=mongodb://localhost:27017/techcup
+
+# Seguridad JWT
+JWT_SECRET=tu_clave_secreta_base64
+```
+
+> [!WARNING]
+> Nunca subas credenciales reales al repositorio. El archivo `application.properties` usa variables de entorno con valores por defecto solo para desarrollo local.
+
+### 4. Ejecutar en desarrollo
+
 ```bash
 mvn spring-boot:run
 ```
 
+> [!TIP]
+> El servicio se ejecutará en `http://localhost:8081`. Swagger en `http://localhost:8081/swagger-ui.html`.
+
+### 5. Ejecutar en modo empaquetado
+
+```bash
+mvn clean package
+java -jar target/techcup-competitions-0.0.1-SNAPSHOT.jar
+```
+
+### Ejecución con Docker
+
+```bash
+docker build -t techcup-competitions .
+
+docker run -d \
+  --name techcup-competitions \
+  -p 8083:8083 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/techcup \
+  -e SPRING_DATASOURCE_USERNAME=usuario \
+  -e SPRING_DATASOURCE_PASSWORD=contrasena \
+  -e SPRING_MONGODB_URI=mongodb://host:27017/techcup \
+  -e JWT_SECRET=tu_clave_secreta \
+  techcup-competitions
+```
+
 ---
 
-## Git Branching Strategy
+## Modelación y diagramas
 
-Each feature was developed in isolation and merged via Pull Requests to the `develop` branch:
+### Diagrama de contenedores
 
-| Branch | Content |
-|--------|---------|
-| feature/entities-competition | JPA entity classes, enums, and entity tests |
-| feature/dtos-competitions | Data Transfer Objects and DTO tests |
-| feature/class-diagram | Class diagram documentation |
-| feature/repository | Spring Data JPA repository interfaces and repository tests |
-| feature/service | Business logic services and service tests |
-| feature/model | State pattern models and model tests |
-| feature/mapper-competition | MapStruct mappers and mapper tests |
-| feature/controller-competition | REST controllers, controller tests, integration tests, and Dockerfile |
-| feature/api | API configuration and OpenAPI setup |
-| feature/deployment | CI/CD pipeline Azure deployment step and environment variables |
+![ContainerDiagram](src/main/resources/docs/uml/architecturalDesigns/containerDiagram.png)
+
+> El servicio `techcup-competitions` recibe peticiones desde el API Gateway y persiste datos en PostgreSQL (entidades estructuradas: partidos, alineaciones, eventos, posiciones) y MongoDB (documentos de auditoría y datos no estructurados).
+
+### Diagrama de clases
+
+![ClassDiagram](src/main/resources/docs/uml/classDiagram.png)
+
+> Las principales entidades son `Match` (con patrón de estado: SCHEDULED → IN_PROGRESS → FINISHED/CANCELLED), `Lineup`, `MatchEvent` (clase abstracta con herencia a `Goal` y `Card`), `Standings` y `MatchAudit`.
+
+### Diagrama Entidad-Relación
+
+![DatabaseDiagram](src/main/resources/docs/uml/dataBaseDiagram.png)
+
+> El modelo relacional central es `Match` relacionado con `Lineup` (uno por equipo por partido), `MatchEvent` (polimórfico via JOIN: `Goal` y `Card`), `Standings` (por equipo y torneo) y `MatchAudit` (log de cambios).
 
 ---
+
+## API y Endpoints
+
+```
+http://localhost:8081/swagger-ui.html
+```
+
+![Swagger UI](src/main/resources/docs/images/swaggerUi.png)
+
+### Partidos
+
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/matches` | Crear nuevo partido | Organizador / Árbitro |
+| PUT | `/api/matches/{id}` | Actualizar datos del partido | Organizador / Árbitro |
+| DELETE | `/api/matches/{id}` | Eliminar partido (solo si está SCHEDULED) | Organizador |
+| PUT | `/api/matches/{id}/start` | Iniciar partido (cambia estado a IN_PROGRESS) | Árbitro |
+| PUT | `/api/matches/{id}/finish` | Finalizar partido (cambia estado a FINISHED) | Árbitro |
+| POST | `/api/matches/goals` | Registrar evento de gol | Árbitro |
+| POST | `/api/matches/cards` | Registrar evento de tarjeta | Árbitro |
+| GET | `/api/matches/{id}/events` | Obtener todos los eventos del partido | Todos |
+| GET | `/api/matches/standings/{tournamentId}` | Obtener tabla de posiciones del torneo | Todos |
+| GET | `/api/matches/tournament/{tournamentId}` | Obtener todos los partidos del torneo | Todos |
+
+### Alineaciones
+
+| Método | Endpoint | Descripción | Roles |
+|--------|----------|-------------|-------|
+| POST | `/api/lineups` | Crear nueva alineación para un partido | Capitán |
+| PUT | `/api/lineups/{id}` | Actualizar alineación (antes de confirmar) | Capitán |
+| PUT | `/api/lineups/{id}/confirm` | Confirmar alineación (bloquea cambios) | Capitán |
+| GET | `/api/lineups/match/{matchId}/team/{teamId}` | Obtener alineación de un equipo en un partido | Todos |
+
+---
+
+## Pruebas y calidad
+
+### Cobertura (JaCoCo)
+
+![JaCoCo Report](src/main/resources/docs/images/jacocoReport.png)
+
+```bash
+mvn test
+mvn clean test jacoco:report
+# Reporte: target/site/jacoco/index.html
+```
+
+### Calidad (SonarQube)
+
+![SonarQube](src/main/resources/docs/images/sonarQubeAnalysis.png)
+
+```bash
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=<PROJECT_KEY> \
+  -Dsonar.host.url=<SONAR_HOST_URL> \
+  -Dsonar.token=<SONAR_TOKEN>
+```
+
+### Pruebas de integración (Postman)
+
+![Postman Tests](src/main/resources/docs/images/postmanTests.png)
+
+---
+
+## CI/CD
+
+### Entorno de despliegue
+
+| Campo | Valor |
+|-------|-------|
+| Plataforma | Azure Web Apps |
+| URL del servicio | [https://techcupcompetitions.azurewebsites.net](https://techcupcompetitions.azurewebsites.net) |
+| Swagger desplegado | [https://techcupcompetitions.azurewebsites.net/swagger-ui.html](https://techcupcompetitions.azurewebsites.net/swagger-ui.html) |
+| Última versión | ![Deploy](https://github.com/techcup-futbol-dosw/techcup-competitions/actions/workflows/pipeline.yml/badge.svg) |
